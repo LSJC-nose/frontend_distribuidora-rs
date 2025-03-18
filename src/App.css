@@ -1,0 +1,19 @@
+.color-navbar {
+  background-color: #0093E9 !important;
+  background-image: linear-gradient(90deg, #0093E9 0%, #80D0C7 100%);
+}
+
+.color-texto-marca {
+  color: #1e3d87 !important;
+}
+.btns{
+  color: hsl(101, 88%, 23%);
+  width: 200px;
+  border-radius: 20px;
+}
+.titulo{
+  color: rgb(124, 70, 8);
+}
+.sub{
+  color: #b37707;
+}
