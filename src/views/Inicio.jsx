@@ -21,11 +21,16 @@ const Inicio = () => {
     navegar("/");
   };
 
+  const iraservicio= () => {
+    navegar("/servicios");
+  };
+
   return (
     <Container>
-      <h1>¡Bienvenido, {nombreUsuario}!</h1>
-      <p>Estás en la página de inicio.</p>
-      <button onClick={cerrarSesion}>Cerrar Sesión</button>
+      <h1 className="titulo">¡Bienvenido, {nombreUsuario}!</h1>
+      <p className="subtitulo">Estás en la página de inicio.</p>
+      <button className="btns" onClick={cerrarSesion}>Cerrar Sesión</button>
+      <button className="btns" onClick={iraservicio}>servicios</button>
     </Container>
   );
 };
