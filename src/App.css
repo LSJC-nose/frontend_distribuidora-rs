@@ -1,3 +1,21 @@
+body {
+  display: block;
+  position: relative;
+  top: -2px;
+  height: 400px;
+  background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1356 200" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path fill="rgba(37, 170, 148, 1)" d="M 0 200 C 413.4 200 275.6 110 689 110 L 689 110 L 689 0 L 0 0 Z" stroke-width="0"></path> <path fill="rgba(37, 170, 148, 1)" d="M 688 110 C 1088.8 110 955.2 0 1356 0 L 1356 0 L 1356 0 L 688 0 Z" stroke-width="0"></path> </svg>');
+  background-size: cover;
+  background-repeat: no-repeat;
+ }
+ 
+ @media (max-width:1355px) {
+  .div {
+    background-size: contain;
+  }
+ }
+ 
+ 
+
 .color-navbar {
   background: #1a2a6c;  /* fallback for old browsers */
   background: -webkit-linear-gradient(to right, #fdbb2d, #b21f1f, #1a2a6c);  /* Chrome 10-25, Safari 5.1-6 */
