@@ -1,12 +1,38 @@
-import React from "react";
+// Importaciones necesarias para el componente visual
+import React from 'react';
+import { Table } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-const InicioCategorias = () => {
+// Declaración del componente TablaCategorias que recibe props
+const TablaCategorias = ({ categorias, cargando, error }) => {
+  // Renderizado condicional según el estado recibido por props
+  if (cargando) {
+    return <div>Cargando categorías...</div>; // Muestra mensaje mientras carga
+  }
+  if (error) {
+    return <div>Error: {error}</div>;         // Muestra error si ocurre
+  }
+
+  // Renderizado de la tabla con los datos recibidos
   return (
-    <div>
-      <h1>Gestión de Categorías</h1>
-      <p>Este es el componente inicial para la tabla de categorías.</p>
-    </div>
+    <Table striped bordered hover responsive>
+      <thead>
+        <tr>
+          <th>ID Categoría</th>
+          <th>Nombre</th>
+        </tr>
+      </thead>
+      <tbody>
+        {categorias.map((categoria) => (
+          <tr key={categoria.id_categoria}>
+            <td>{categoria.ID_Categoria}</td>
+            <td>{categoria.NombreCategoria}</td>
+          </tr>
+        ))}
+      </tbody>
+    </Table>
   );
 };
 
-export default InicioCategorias;
+// Exportación del componente
+export default TablaCategorias;

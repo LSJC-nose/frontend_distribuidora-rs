@@ -46,7 +46,7 @@ const Encabezado = () => {
           style={{ cursor: "pointer" }}
         >
           <img alt="" src={logo} width="30" height="30" className="d-inline-block align-top" />{" "}
-          <strong>Ferretería Selva</strong>
+          <strong>Rivas suarez</strong>
         </Navbar.Brand>
 
         {/* Botón para alternar el menú lateral en pantallas pequeñas */}
@@ -77,38 +77,46 @@ const Encabezado = () => {
           <Offcanvas.Body>
             {/* Navegación */}
             <Nav className="justify-content-end flex-grow-1 pe-3">
-  {/* Opción de navegación a Inicio */}
-  <Nav.Link
-    onClick={() => navegarA("/inicio")}
-    className={estaColapsado ? "text-black" : "text-white"}
-  >
-    {estaColapsado ? <i className="bi-house-door-fill me-2"></i> : null}
-         <strong>Inicio</strong>
-               </Nav.Link>
-                     {/* Opciones adicionales para las tablas */}
-                    <Nav.Link onClick={() => navegarA("/calificaciones")} className={estaColapsado ? "text-black" : "text-white"}>
-                    <i className="bi bi-bar-chart-fill me-2"></i>Calificaciones
-                    </Nav.Link>
-                    <Nav.Link onClick={() => navegarA("/facturas/ventas")} className={estaColapsado ? "text-black" : "text-white"}>
-                      <i className="bi bi-file-earmark-fill me-2"></i>Facturas - Ventas
-                    </Nav.Link>
-                    <Nav.Link onClick={() => navegarA("/facturas/compras")} className={estaColapsado ? "text-black" : "text-white"}>
-                      <i className="bi bi-file-earmark-fill me-2"></i>Facturas - Compras
-                    </Nav.Link>
-                    <Nav.Link onClick={() => navegarA("/proveedores")} className={estaColapsado ? "text-black" : "text-white"}>
-                      <i className="bi bi-people-fill me-2"></i>Proveedores
-                    </Nav.Link>
-                    <Nav.Link onClick={() => navegarA("/productos")} className={estaColapsado ? "text-black" : "text-white"}>
-                      <i className="bi bi-box-fill me-2"></i>Productos
-                    </Nav.Link>
-                    <Nav.Link onClick={() => navegarA("/clientes")} className={estaColapsado ? "text-black" : "text-white"}>
-                      <i className="bi bi-person-fill me-2"></i>Clientes
-                    </Nav.Link>
-                    <Nav.Link onClick={() => navegarA("/categorias")} className={estaColapsado ? "text-black" : "text-white"}>
-                      <i className="bi bi-tags-fill me-2"></i>Categorías
-                    </Nav.Link>
-                  </Nav>
-         
+              {/* Opción de navegación a Inicio */}
+              <Nav.Link
+                onClick={() => navegarA("/inicio")}
+                className={estaColapsado ? "text-black" : "text-white"}
+              >
+                {estaColapsado ? <i className="bi-house-door-fill me-2"></i> : null}
+                <strong>Inicio</strong>
+              </Nav.Link>
+
+              <Nav.Link
+                onClick={() => navegarA("/categoria")}
+                className={estaColapsado ? "text-black" : "text-white"}
+              >
+                {estaColapsado ? <i className="bi-house-door-fill me-2"></i> : null}
+                <strong>Categoria</strong>
+              </Nav.Link>
+
+              {/* Lógica condicional para mostrar Cerrar Sesión o Iniciar Sesión */}
+              {estaLogueado ? (
+                // Opción de cerrar sesión
+                <Nav.Link
+                  onClick={cerrarSesion}
+                  className={estaColapsado ? "text-black" : "text-white"}
+                >
+                  Cerrar Sesión
+                </Nav.Link>
+              ) : (
+                ubicacion.pathname === "/" && (
+                  // Opción de iniciar sesión (solo en la ruta raíz)
+                  <Nav.Link
+                    onClick={() => navegarA("/")}
+                    className={estaColapsado ? "text-black" : "text-white"}
+                  >
+                    Iniciar Sesión
+                  </Nav.Link>
+
+                  
+                )
+              )}
+            </Nav>
           </Offcanvas.Body>
         </Navbar.Offcanvas>
       </Container>
