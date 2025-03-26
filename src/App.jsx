@@ -2,7 +2,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./views/Login";
 import Inicio from "./views/Inicio";
 import './App.css';
-import Encabezado from "./components/encabezado/Encabezado";
+import Encabezado from "./components/encabezado/Encabezado.jsx";
+
 
 const App = () => {
   return (
