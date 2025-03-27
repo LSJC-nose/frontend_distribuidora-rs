@@ -102,6 +102,14 @@ const Encabezado = () => {
                 <strong>Productos</strong>
               </Nav.Link>
 
+ --             <Nav.Link
+                onClick={() => navegarA("/venta_factura")}
+                className={estaColapsado ? "text-black" : "text-white"}
+              >
+                {estaColapsado ? <i className="bi-house-door-fill me-2"></i> : null}
+                <strong>Ventas</strong>
+              </Nav.Link>
+--
               <Nav.Link
                 onClick={() => navegarA("/proveedor")}
                 className={estaColapsado ? "text-black" : "text-white"}
@@ -109,6 +117,23 @@ const Encabezado = () => {
                 {estaColapsado ? <i className="bi-house-door-fill me-2"></i> : null}
                 <strong>Proveedores</strong>
               </Nav.Link>
+
+              <Nav.Link
+                onClick={() => navegarA("/compra_factura")}
+                className={estaColapsado ? "text-black" : "text-white"}
+              >
+                {estaColapsado ? <i className="bi-house-door-fill me-2"></i> : null}
+                <strong>Compras</strong>
+              </Nav.Link>
+
+              <Nav.Link
+                onClick={() => navegarA("/cliente")}
+                className={estaColapsado ? "text-black" : "text-white"}
+              >
+                {estaColapsado ? <i className="bi-house-door-fill me-2"></i> : null}
+                <strong>Cliente</strong>
+              </Nav.Link>
+
 
               {/* Lógica condicional para mostrar Cerrar Sesión o Iniciar Sesión */}
               {estaLogueado ? (
