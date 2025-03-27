@@ -2,11 +2,10 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./views/Login";
 import Inicio from "./views/Inicio";
 import Encabezado from "./components/encabezado/Encabezado";
-import InicioClientes from "./components/cliente/InicioClientes";
 import Categorias from "./views/categoria";
 import Productos from "./views/producto";
-
 import './App.css';
+import Proveedor from "./views/proveedor";
 
 const App = () => {
   return (
@@ -18,6 +17,7 @@ const App = () => {
           <Route path="/inicio" element={<Inicio />} />
           <Route path="/categoria" element={<Categorias />} />
           <Route path="/producto" element={<Productos />} />
+          <Route path="/proveedor" element={<Proveedor />} />
         </Routes>
       </main>
     </Router>
