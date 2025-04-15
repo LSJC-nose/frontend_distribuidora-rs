@@ -8,6 +8,7 @@ import './App.css';
 import Proveedor from "./views/proveedor";
 import Ventas from "./views/venta_factura"
 import Cliente from "./views/cliente";
+import Compras from "./views/compra_factura";
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
           <Route path="/proveedor" element={<Proveedor />} />
           <Route path="/venta_factura" element={<Ventas />} />
           <Route path="/cliente" element={<Cliente />} />
+          <Route path="/compra_factura" element={<Compras />} />
         </Routes>
       </main>
     </Router>

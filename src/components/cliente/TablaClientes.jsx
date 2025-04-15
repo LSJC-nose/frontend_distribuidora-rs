@@ -4,7 +4,7 @@ import { Table } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 // Declaración del componente TablaClientes que recibe props
-const InicioClientes = ({ clientes, cargando, error }) => {
+const TablaClientes = ({ clientes, cargando, error }) => {
   // Renderizado condicional según el estado recibido por props
   if (cargando) {
     return <div>Cargando clientes...</div>; // Muestra mensaje mientras carga
@@ -30,7 +30,7 @@ const InicioClientes = ({ clientes, cargando, error }) => {
             <td>{cliente.ID_Cliente}</td>
             <td>{cliente.Nombre}</td>
             <td>{cliente.Apellido}</td>
-            <td>{cliente.Tipo_Cliente}</td>
+            <td>{cliente.ID_tipoCliente}</td>
           </tr>
         ))}
       </tbody>
@@ -39,4 +39,4 @@ const InicioClientes = ({ clientes, cargando, error }) => {
 };
 
 // Exportación del componente
-export default InicioClientes;
+export default TablaClientes;
