@@ -29,7 +29,7 @@ const Inicio = () => {
     <Container>
       <h1 className="titulo">¡Bienvenido, {nombreUsuario}!</h1>
       <p className="subtitulo">Estás en la página de inicio.</p>
-      <button className="btns" onClick={cerrarSesion}>Cerrar Sesión</button>
+      <button className="btns" onClick={cerrarSesion}>Cerrar Sesión</button>cd
     </Container>
   );
 };

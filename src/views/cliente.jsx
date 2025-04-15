@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import TablaClientes from '../components/cliente/TablaClientes'; // Importa el componente de tabla
 import ModalRegistroCliente from '../components/cliente/ModalRegistroCliente';
+import CuadroBusquedas from "../components/busquedas/CuadroBusquedas";
 import { Container,Button,Row, Col} from "react-bootstrap";
 
 // Declaración del componente Clientes
@@ -17,6 +18,10 @@ const Clientes = () => {
     Apellido: '',
     ID_tipoCliente: ''
   });
+    const [clientesFiltradas, setClientesFiltradas] = useState([]);
+    const [textoBusqueda, setTextoBusqueda] = useState("");
+    const [paginaActual, establecerPaginaActual] = useState(1);
+    const elementosPorPagina = 5; // Número de elementos por página
 
   // Lógica de obtención de datos con useEffect
     // Obtener productos
@@ -26,12 +31,30 @@ const Clientes = () => {
         if (!respuesta.ok) throw new Error('Error al cargar los clientes');
         const datos = await respuesta.json();
         setListaClientes(datos);
+        setClientesFiltradas(datos);
         setCargando(false);
       } catch (error) {
         setErrorCarga(error.message);
         setCargando(false);
       }
     };
+
+    const manejarCambioBusqueda = (e) => {
+      const texto = e.target.value.toLowerCase();
+      setTextoBusqueda(texto);
+      
+      const filtradas = listaClientes.filter(
+        (cliente) =>
+          cliente.Nombre.toLowerCase().includes(texto) 
+      );
+      setClientesFiltradas(filtradas);
+    };
+    // Calcular elementos paginados
+const clientesPaginadas = clientesFiltradas.slice(
+  (paginaActual - 1) * elementosPorPagina,
+  paginaActual * elementosPorPagina
+);
+  
 
     // Manejo la inserción de una nueva categoría
     const agregarCliente = async () => {
@@ -99,18 +122,29 @@ const Clientes = () => {
         <br />
         <h4>Clientes</h4>
 
-      
-        <Button variant="primary" onClick={() => setMostrarModal(true)}>
-        Nuevo Cliente
+        <Row>
+    <Col lg={2} md={4} sm={4} xs={5}>
+      <Button variant="primary" onClick={() => setMostrarModal(true)} style={{ width: "100%" }}>
+        Nueva Categoría
       </Button>
-      <br/><br/>
-   
+    </Col>
+    <Col lg={5} md={8} sm={8} xs={7}>
+      <CuadroBusquedas
+        textoBusqueda={textoBusqueda}
+        manejarCambioBusqueda={manejarCambioBusqueda}
+      />
+    </Col>
+  </Row>  
 
         {/* Pasa los estados como props al componente TablaClientes */}
         <TablaClientes 
-          clientes={listaClientes} 
+        clientes={clientesPaginadas}  
           cargando={cargando} 
           error={errorCarga} 
+          totalElementos={listaClientes.length} // Total de elementos
+          elementosPorPagina={elementosPorPagina} // Elementos por página
+          paginaActual={paginaActual} // Página actual
+          establecerPaginaActual={establecerPaginaActual} // Método para cambiar página
         />
 
  <ModalRegistroCliente
