@@ -21,6 +21,10 @@ const Inicio = () => {
     navegar("/");
   };
 
+  const iraservicio= () => {
+    navegar("/servicios");
+  };
+
   return (
     <Container>
       <h1 className="titulo">¡Bienvenido, {nombreUsuario}!</h1>

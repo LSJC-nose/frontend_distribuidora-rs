@@ -118,14 +118,7 @@ const Encabezado = () => {
                 <strong>Proveedores</strong>
               </Nav.Link>
 
-              <Nav.Link
-                onClick={() => navegarA("/compra_factura")}
-                className={estaColapsado ? "text-black" : "text-white"}
-              >
-                {estaColapsado ? <i className="bi-house-door-fill me-2"></i> : null}
-                <strong>Compras</strong>
-              </Nav.Link>
-
+             
               <Nav.Link
                 onClick={() => navegarA("/cliente")}
                 className={estaColapsado ? "text-black" : "text-white"}
