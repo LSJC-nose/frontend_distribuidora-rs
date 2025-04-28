@@ -29,7 +29,7 @@ const TablaVentas = ({ ventas, cargando, error }) => {
       <tbody>
         {ventas.map((venta) => (
           <tr key={`${venta.NumeroFactura}-${venta.ID_Detalle}`}> {/* Clave única combinada */}
-            <td>{venta.NumeroFactura}</td>
+            <td>{venta.ID_Venta}</td>
             <td>{venta.ID_Detalle}</td>
             <td>{venta.ID_Tiempo}</td>
             <td>{venta.nombreCliente}</td>

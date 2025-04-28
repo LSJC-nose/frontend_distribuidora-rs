@@ -4,12 +4,16 @@ import TablaClientes from '../components/cliente/TablaClientes'; // Importa el c
 import ModalRegistroCliente from '../components/cliente/ModalRegistroCliente';
 import CuadroBusquedas from "../components/busquedas/CuadroBusquedas";
 import { Container,Button,Row, Col} from "react-bootstrap";
+import ModalEliminacionCliente from '../components/cliente/ModalEliminacionCliente';
+import ModalEdicionCliente from '../components/cliente/ModalActualizacionCliente';
+
 
 // Declaración del componente Clientes
 const Clientes = () => {
   // Estados para manejar los datos, carga y errores
   const [listaClientes, setListaClientes] = useState([]); // Almacena los datos de la API
   const [listaTipoCliente, setListaTipoClientes] = useState([]); // Almacena los datos de la API
+  const [listaactualizadatipocliente,setListatipoclientes] = useState([]);
   const [cargando, setCargando] = useState(true); // Controla el estado de carga
   const [errorCarga, setErrorCarga] = useState(null); // Maneja errores de la petición
   const [mostrarModal, setMostrarModal] = useState(false);
@@ -22,6 +26,12 @@ const Clientes = () => {
     const [textoBusqueda, setTextoBusqueda] = useState("");
     const [paginaActual, establecerPaginaActual] = useState(1);
     const elementosPorPagina = 5; // Número de elementos por página
+const [mostrarModalEliminacion, setMostrarModalEliminacion] = useState(false);
+const [clienteAEliminar, setClienteAEliminar] = useState(null);
+const [clienteEditado, setClienteEditada] = useState(null);
+const [mostrarModalEdicion, setMostrarModalEdicion] = useState(false);
+
+
 
   // Lógica de obtención de datos con useEffect
     // Obtener productos
@@ -45,10 +55,12 @@ const Clientes = () => {
       
       const filtradas = listaClientes.filter(
         (cliente) =>
-          cliente.Nombre.toLowerCase().includes(texto) 
+          cliente.Nombre.toLowerCase().includes(texto) || 
+        cliente.Apellido.toLowerCase().includes(texto) 
       );
       setClientesFiltradas(filtradas);
     };
+
     // Calcular elementos paginados
 const clientesPaginadas = clientesFiltradas.slice(
   (paginaActual - 1) * elementosPorPagina,
@@ -97,6 +109,7 @@ const clientesPaginadas = clientesFiltradas.slice(
       if (!respuesta.ok) throw new Error('Error al cargar el tipo de cliente');
       const datos = await respuesta.json();
       setListaTipoClientes(datos);
+      setListatipoclientes(datos);
     } catch (error) {
       setErrorCarga(error.message);
     }
@@ -115,12 +128,89 @@ const clientesPaginadas = clientesFiltradas.slice(
     }));
   };
 
+  const manejarCambioInputEdicion = (e) => {
+    const { name, value } = e.target;
+    setClienteEditada(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const eliminarCliente = async () => {
+    if (!clienteAEliminar) return;
+
+    try {
+      const respuesta = await fetch(`http://localhost:3000/api/eliminarclientes/${clienteAEliminar.ID_Cliente}`, {
+        method: 'DELETE',
+      });
+
+      if (!respuesta.ok) {
+        throw new Error('Error al eliminar el cliente');
+      }
+
+      await obtenerClientes(); // Refresca la lista
+      setMostrarModalEliminacion(false);
+      establecerPaginaActual(1); // Regresa a la primera página
+      setClienteAEliminar(null);
+      setErrorCarga(null);
+    } catch (error) {
+      setErrorCarga(error.message);
+    }
+  };
+
+  const abrirModalEliminacion = (cliente) => {
+    setClienteAEliminar(cliente);
+    setMostrarModalEliminacion(true);
+  };
+
+  //Actualizar cliente
+  const actualizarCliente = async () => {
+    if (!clienteEditado?.Nombre || !clienteEditado?.Apellido || !clienteEditado?.ID_tipoCliente  ) {
+      setErrorCarga("Por favor, completa todos los campos antes de guardar.");
+      return;
+    }
+
+    try {
+      const respuesta = await fetch(`http://localhost:3000/api/actualizarcliente/${clienteEditado.ID_Cliente}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          Nombre: clienteEditado.Nombre,
+          Apellido: clienteEditado.Apellido,
+          ID_tipoCliente: clienteEditado.ID_tipoCliente
+        
+        }),
+      });
+
+      if (!respuesta.ok) {
+        throw new Error('Error al actualizar el cliente');
+      }
+
+      await obtenerClientes();
+      setMostrarModalEdicion(false);
+      setClienteEditada(null);
+      setErrorCarga(null);
+    } catch (error) {
+      setErrorCarga(error.message);
+    }
+  };
+
+  const abrirModalEdicion = (cliente) => {
+    setClienteEditada(cliente);
+    setMostrarModalEdicion(true);
+  };
+
+
+
+
   // Renderizado de la vista
   return (
     <>
       <Container className="mt-5">
         <br />
-        <h4>Clientes</h4>
+        <h2>Clientes</h2>
 
         <Row>
     <Col lg={2} md={4} sm={4} xs={5}>
@@ -145,6 +235,8 @@ const clientesPaginadas = clientesFiltradas.slice(
           elementosPorPagina={elementosPorPagina} // Elementos por página
           paginaActual={paginaActual} // Página actual
           establecerPaginaActual={establecerPaginaActual} // Método para cambiar página
+          abrirModalEliminacion={abrirModalEliminacion} // Método para abrir modal de eliminación
+          abrirModalEdicion={abrirModalEdicion} // Método para abrir modal de edición
         />
 
  <ModalRegistroCliente
@@ -156,6 +248,23 @@ const clientesPaginadas = clientesFiltradas.slice(
         errorCarga={errorCarga}
         tipoClientes={listaTipoCliente}
       />
+
+<ModalEliminacionCliente
+          mostrarModalEliminacion={mostrarModalEliminacion}
+          setMostrarModalEliminacion={setMostrarModalEliminacion}
+          eliminarCliente={eliminarCliente}
+        />
+
+<ModalEdicionCliente
+          mostrarModalEdicion={mostrarModalEdicion}
+          setMostrarModalEdicion={setMostrarModalEdicion}
+          clienteEditado={clienteEditado}
+          manejarCambioInputEdicion={manejarCambioInputEdicion}
+          actualizarCliente={actualizarCliente}
+          errorCarga={errorCarga}
+          actualizartipoClientes={listaactualizadatipocliente}
+        />
+
 
       </Container>
     </>

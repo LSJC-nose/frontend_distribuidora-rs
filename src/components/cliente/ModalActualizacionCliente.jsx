@@ -1,20 +1,20 @@
-// ModalRegistroCategoria.jsx
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, Form, Button } from "react-bootstrap";
 
-const ModalRegistroCliente = ({
-  mostrarModal,
-  setMostrarModal,
-  nuevoCliente,
-  manejarCambioInput,
-  agregarCliente,
+const ModalEdicionCliente = ({
+  mostrarModalEdicion,
+  setMostrarModalEdicion,
+  clienteEditado,
+  manejarCambioInputEdicion,
+  actualizarCliente,
   errorCarga,
-  tipoClientes
+  actualizartipoClientes, // Nueva prop para recibir la lista de tipos de cliente
 }) => {
+
   return (
-    <Modal show={mostrarModal} onHide={() => setMostrarModal(false)}>
+    <Modal show={mostrarModalEdicion} onHide={() => setMostrarModalEdicion(false)}>
       <Modal.Header closeButton>
-        <Modal.Title>Agregar Nuevos Clientes</Modal.Title>
+        <Modal.Title>Editar Cliente</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form>
@@ -23,45 +23,44 @@ const ModalRegistroCliente = ({
             <Form.Control
               type="text"
               name="Nombre"
-              value={nuevoCliente.Nombre}
-              onChange={manejarCambioInput}
+              value={clienteEditado?.Nombre || ""}
+              onChange={manejarCambioInputEdicion}
               placeholder="Ingresa el nombre (máx. 20 caracteres)"
-              maxLength={50}
+              maxLength={20}
               required
             />
-
-            
           </Form.Group>
-          <Form.Group className="mb-3" controlId="formApellidoCliente">
+          <Form.Group className="mb-3" controlId="formApellidocliente">
             <Form.Label>Apellido del cliente</Form.Label>
             <Form.Control
               type="text"
               name="Apellido"
-              value={nuevoCliente.Apellido}
-              onChange={manejarCambioInput}
+              value={clienteEditado?.Apellido || ""}
+              onChange={manejarCambioInputEdicion}
               placeholder="Ingresa el apellido (máx. 20 caracteres)"
-              maxLength={50}  
+              maxLength={20}
               required
             />
-
             
-            <Form.Group className="mb-3" controlId="formCliente_tipoCliente">
-            <Form.Label>Tipo Cliente</Form.Label>
+          </Form.Group>
+          {/* Nuevo campo para seleccionar el tipo de cliente */}
+          <Form.Group className="mb-3" controlId="formTipoCliente">
+            <Form.Label>Tipo de Cliente</Form.Label>
             <Form.Select
               name="ID_tipoCliente"
-              value={nuevoCliente.ID_tipoCliente}
-              onChange={manejarCambioInput}
+              value={clienteEditado?.ID_tipoCliente || ""}
+              onChange={manejarCambioInputEdicion}
               required
             >
               <option value="">Selecciona el tipo de cliente</option>
-              {tipoClientes.map((tipoCliente) => (
+              {actualizartipoClientes.map((tipoCliente) => (
                 <option key={tipoCliente.ID_tipoCliente} value={tipoCliente.ID_tipoCliente}>
                   {tipoCliente.TipoCliente}
                 </option>
-              ))}
+                ))}
             </Form.Select>
           </Form.Group>
-          </Form.Group>
+          
           {errorCarga && (
             <div className="text-danger mt-2">{errorCarga}</div>
           )}
@@ -69,17 +68,15 @@ const ModalRegistroCliente = ({
       </Modal.Body>
       
       <Modal.Footer>
-        <Button variant="secondary" onClick={() => {
-          setMostrarModal(false);
-        }}>
+        <Button variant="secondary" onClick={() => setMostrarModalEdicion(false)}>
           Cancelar
         </Button>
-        <Button variant="primary" onClick={agregarCliente}>
-          Guardar Cliente
+        <Button variant="primary" onClick={actualizarCliente}>
+          Guardar Cambios
         </Button>
       </Modal.Footer>
     </Modal>
   );
 };
 
-export default ModalRegistroCliente;
+export default ModalEdicionCliente;

@@ -1,11 +1,11 @@
 // Importaciones necesarias para el componente visual
 import React from 'react';
-import { Table, Button} from 'react-bootstrap';
+import { Table, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Paginacion from "../ordenamiento/Paginacion";
 
-// Declaración del componente TablaCategorias que recibe props
-const TablaCategorias = ({ categorias,
+// Declaración del componente TablaClientes que recibe props
+const TablaClientes = ({ clientes,
    cargando,
     error ,
     totalElementos,
@@ -17,10 +17,10 @@ const TablaCategorias = ({ categorias,
   }) => {
   // Renderizado condicional según el estado recibido por props
   if (cargando) {
-    return <div>Cargando categorías...</div>; // Muestra mensaje mientras carga
+    return <div>Cargando clientes...</div>; // Muestra mensaje mientras carga
   }
   if (error) {
-    return <div>Error: {error}</div>;         // Muestra error si ocurre
+    return <div>Error: {error}</div>; // Muestra error si ocurre
   }
 
   // Renderizado de la tabla con los datos recibidos
@@ -29,23 +29,27 @@ const TablaCategorias = ({ categorias,
     <Table striped bordered hover responsive>
       <thead>
         <tr>
-          <th>ID Categoría</th>
+          <th>ID Cliente</th>
           <th>Nombre</th>
+          <th>Apellido</th>
+          <th>TipoCliente</th>
           <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
-        {categorias.map((categoria) => (
-          <tr key={categoria.id_categoria}>
-            <td>{categoria.ID_Categoria}</td>
-            <td>{categoria.NombreCategoria}</td>
+        {clientes.map((cliente) => (
+          <tr key={cliente.ID_Cliente}>
+            <td>{cliente.ID_Cliente}</td>
+            <td>{cliente.Nombre}</td>
+            <td>{cliente.Apellido}</td>
+            <td>{cliente.ID_tipoCliente}</td>
             <td>
 
 <Button
       variant="outline-warning"
       size="sm"
       className="me-2"
-      onClick={() => abrirModalEdicion(categoria)}
+      onClick={() => abrirModalEdicion(cliente)}
     >
       <i className="bi bi-pencil"></i>
     </Button>
@@ -53,17 +57,16 @@ const TablaCategorias = ({ categorias,
     <Button
       variant="outline-danger"
       size="sm"
-      onClick={() => abrirModalEliminacion(categoria)}
+      onClick={() => abrirModalEliminacion(cliente)}
     >
       <i className="bi bi-trash"></i>
     </Button>
   </td>
-
           </tr>
         ))}
       </tbody>
     </Table>
-
+    
     <Paginacion
   elementosPorPagina={elementosPorPagina}
   totalElementos={totalElementos}
@@ -75,4 +78,4 @@ const TablaCategorias = ({ categorias,
 };
 
 // Exportación del componente
-export default TablaCategorias;
+export default TablaClientes;

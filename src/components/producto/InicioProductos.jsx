@@ -20,7 +20,7 @@ const TablaProducto = ({ productos, cargando, error }) => {
         <tr>
           <th>ID Producto</th>
           <th>Stock</th>
-          <th>ID categoria</th>
+          <th>Categoria</th>
           <th>PrecioCompra</th>
           <th>PrecioVenta</th>
           <th>Producto</th>
@@ -32,7 +32,7 @@ const TablaProducto = ({ productos, cargando, error }) => {
           <tr key={producto.ID_Producto}>
             <td>{producto.ID_Producto}</td>
             <td>{producto.Stock}</td>
-            <td>{producto.ID_Categoria}</td>
+            <td>{producto.NombreCategoria}</td>
             <td>{producto.PrecioCompra}</td>
             <td>{producto.PrecioVenta}</td>
             <td>{producto.nombreProducto}</td>
