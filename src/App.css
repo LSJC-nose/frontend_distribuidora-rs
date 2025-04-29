@@ -19,8 +19,8 @@ body {
  
 
 .color-navbar {
-  background: #22C1C3;
-  background: radial-gradient(circle,rgba(34, 193, 195, 1) 0%, rgba(253, 187, 45, 1) 100%);
+  background: #65b4d6;
+background: linear-gradient(0deg, rgba(101, 180, 214, 1) 0%, rgba(78, 212, 212, 1) 100%);
 }
 
 .color-texto-marca {
