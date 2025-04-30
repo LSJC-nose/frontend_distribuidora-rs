@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Container, Nav, Navbar, Offcanvas } from "react-bootstrap";
-import logo from "/Rivas_sinFondo.png"; // Importación del logo de la ferretería
+import logo from "/logo_rivas.png"; // Importación del logo de la ferretería
 import "bootstrap-icons/font/bootstrap-icons.css"; // Importación de íconos de Bootstrap
 import "../../App.css"; // Estilos personalizados de la aplicación
 
@@ -54,7 +54,7 @@ const Encabezado = () => {
               className="text-white"
               style={{ cursor: "pointer" }}
             >
-              <img alt="" src={logo} width="120" height="auto" className="rounded-pill"
+              <img alt="" src={logo} width="60" height="auto" className="rounded-pill"
              
                 style={{ maxHeight: "40px" }} // Limita la altura máxima
               />{" "}
