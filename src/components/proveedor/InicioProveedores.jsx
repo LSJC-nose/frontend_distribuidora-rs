@@ -1,44 +1,60 @@
-// Importaciones necesarias para el componente visual
-import React from 'react';
-import { Table } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React from "react";
+import { Table, Button } from "react-bootstrap";
 
-// Declaración del componente TablaProveedor que recibe props
-const TablaProveedor = ({ proveedores, cargando, error }) => {
-  // Renderizado condicional según el estado recibido por props
-  if (cargando) {
-    return <div>Cargando proveedor...</div>; // Muestra mensaje mientras carga
-  }
-  if (error) {
-    return <div>Error: {error}</div>;         // Muestra error si ocurre
-  }
+const InicioProveedores = ({
+  proveedores,
+  cargando,
+  error,
+  abrirModalEdicion,
+  abrirModalEliminacion,
+}) => {
+  if (cargando) return <p>Cargando proveedores...</p>;
+  if (error) return <p className="text-danger">Error: {error}</p>;
 
-  // Renderizado de la tabla con los datos recibidos
   return (
-    <Table striped bordered hover responsive>
-      <thead>
-        <tr>
-          <th>ID_Proveedor</th>
-          <th>Proveedor</th>
-          <th>Telefono</th>
-          <th>Correo</th>
-          <th>Direccion</th>
-        </tr>
-      </thead>
-      <tbody>
-        {proveedores && proveedores.map((proveedor) => ( // Verifica que proveedores no sea null antes de mapear
-          <tr key={proveedor.ID_Proveedores}>
-            <td>{proveedor.ID_Proveedores}</td>
-            <td>{proveedor.NombreProveedor}</td>
-            <td>{proveedor.Telefono}</td>
-            <td>{proveedor.Correo}</td  >
-            <td>{proveedor.Direccion}</td>
+    <>
+      <Table striped bordered hover>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Teléfono</th>
+            <th>Correo</th>
+            <th>Dirección</th>
+            <th>Acciones</th>
           </tr>
-        ))}
-      </tbody>
-    </Table>
+        </thead>
+        <tbody>
+          {proveedores.map((proveedor) => (
+            <tr key={proveedor.ID_Proveedores}>
+              <td>{proveedor.ID_Proveedores}</td>
+              <td>{proveedor.NombreProveedor}</td>
+              <td>{proveedor.Telefono}</td>
+              <td>{proveedor.Correo}</td>
+              <td>{proveedor.Direccion}</td>
+              <td>
+                <Button
+                  variant="outline-warning"
+                  size="sm"
+                  className="me-2"
+                  onClick={() => abrirModalEdicion(proveedor)}
+                >
+                  <i className="bi bi-pencil"></i>
+                </Button>
+                <Button
+                  variant="outline-danger"
+                  size="sm"
+                  onClick={() => abrirModalEliminacion(proveedor)}
+                >
+                  <i className="bi bi-trash"></i>
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </>
   );
 };
 
-// Exportación del componente
-export default TablaProveedor;
+export default InicioProveedores;
