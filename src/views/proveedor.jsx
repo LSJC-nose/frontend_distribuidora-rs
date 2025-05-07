@@ -14,19 +14,18 @@ const Proveedor = () => {
   const [listaProveedor, setListaProveedor] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [errorCarga, setErrorCarga] = useState(null);
-
-  const [nuevoProveedor, setNuevoProveedor] = useState({
-    NombreProveedor: '',
-    Telefono: '',
-    Correo: '',
-    Direccion: ''
-  });
-
   const [mostrarModal, setMostrarModal] = useState(false);
   const [proveedorEditado, setProveedorEditado] = useState(null);
   const [mostrarModalEdicion, setMostrarModalEdicion] = useState(false);
   const [proveedorAEliminar, setProveedorAEliminar] = useState(null);
   const [mostrarModalEliminacion, setMostrarModalEliminacion] = useState(false);
+   const [nuevoProveedor, setNuevoProveedor] = useState({
+      NombreProveedor: '',
+      Telefono: '',
+      Correo: '',
+      Direccion: ''
+    });
+    
 
   // Variables de paginación
   const [paginaActual, establecerPaginaActual] = useState(1);
@@ -79,6 +78,128 @@ const Proveedor = () => {
     paginaActual * elementosPorPagina
   );
 
+   // Manejo la inserción de una nueva categoría
+   const agregarProveedor = async () => {
+
+    if (!nuevoProveedor.NombreProveedor || !nuevoProveedor.Telefono || !nuevoProveedor.Correo  || !nuevoProveedor.Direccion) {
+    setErrorCarga("Por favor, completa todos los campos antes de guardar.");
+    return;
+    }
+
+    try {
+      const respuesta = await fetch('http://localhost:3000/api/registrarproveedor', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(nuevoProveedor),
+      });
+
+      if (!respuesta.ok) {
+        throw new Error('Error al agregar el proveedor');
+      }
+
+      await obtenerProveedor(); // Refresca toda la lista desde el servidor
+      setNuevoProveedor({ 
+        NombreProveedor: '',
+        Telefono: '',
+        Correo: '',
+        Direccion: '',
+      });
+      setMostrarModal(false);
+      setErrorCarga(null);
+    } catch (error) {
+      setErrorCarga(error.message);
+    }
+  };
+
+  const manejarCambioInput = (e) => {
+    const { name, value } = e.target;
+    setNuevoProveedor(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const manejarCambioInputEdicion = (e) => {
+    const { name, value } = e.target;
+    setProveedorEditado(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  //Actualizar cliente
+  const actualizarProveedor = async () => {
+    if (!proveedorEditado?.NombreProveedor || !proveedorEditado?.Telefono 
+      || !proveedorEditado?.Correo  || !proveedorEditado?.Direccion  ) {
+      setErrorCarga("Por favor, completa todos los campos antes de guardar.");
+      return;
+    }
+
+    try {
+      const respuesta = await fetch(`http://localhost:3000/api/actualizarproveedor/${proveedorEditado.ID_Proveedores}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          NombreProveedor: proveedorEditado.NombreProveedor,
+          Telefono: proveedorEditado.Telefono,
+          Correo: proveedorEditado.Correo,
+          Direccion: proveedorEditado.Direccion
+        }),
+      });
+
+      if (!respuesta.ok) {
+        throw new Error('Error al actualizar los proveedores');
+      }
+
+      await obtenerProveedor();
+      setMostrarModalEdicion(false);
+      setProveedorEditado(null);
+      setErrorCarga(null);
+    } catch (error) {
+      setErrorCarga(error.message);
+    }
+  };
+
+
+  const abrirModalEdicion = (cliente) => {
+    setProveedorEditado(cliente);
+    setMostrarModalEdicion(true);
+  };
+
+
+  const eliminarProveedor = async () => {
+    if (!proveedorAEliminar) return;
+
+    try {
+      const respuesta = await fetch(`http://localhost:3000/api/eliminarproveedor/${proveedorAEliminar.ID_Proveedores}`, {
+        method: 'DELETE',
+      });
+
+      if (!respuesta.ok) {
+        throw new Error('Error al eliminar el proveedor');
+      }
+
+      await obtenerProveedor(); // Refresca la lista
+      setMostrarModalEliminacion(false);
+      establecerPaginaActual(1); // Regresa a la primera página
+      setProveedorAEliminar(null);
+      setErrorCarga(null);
+    } catch (error) {
+      setErrorCarga(error.message);
+    }
+  };
+
+  const abrirModalEliminacion = (proveedor) => {
+    setProveedorAEliminar(proveedor);
+    setMostrarModalEliminacion(true);
+  };
+
+
+
   return (
     <>
       <Container className="mt-5">
@@ -100,21 +221,24 @@ const Proveedor = () => {
         <br/><br/>
 
         <InicioProveedores
-          proveedores={proveedoresPaginados}
-          cargando={cargando}
-          error={errorCarga}
-          abrirModalEdicion={setMostrarModalEdicion}
-          abrirModalEliminacion={setMostrarModalEliminacion}
+          proveedores={proveedoresPaginados}  
+          cargando={cargando} 
+          error={errorCarga} 
+          totalElementos={listaProveedor.length} // Total de elementos
+          elementosPorPagina={elementosPorPagina} // Elementos por página
+          paginaActual={paginaActual} // Página actual
+          establecerPaginaActual={establecerPaginaActual} // Método para cambiar página
+          abrirModalEliminacion={abrirModalEliminacion} // Método para abrir modal de eliminación
+          abrirModalEdicion={abrirModalEdicion} // Método para abrir modal de edición
         />
+
 
         <ModalRegistroProveedor
           mostrarModal={mostrarModal}
           setMostrarModal={setMostrarModal}
           nuevoProveedor={nuevoProveedor}
-          manejarCambioInput={(e) =>
-            setNuevoProveedor({ ...nuevoProveedor, [e.target.name]: e.target.value })
-          }
-          agregarProveedor={obtenerProveedor} 
+          manejarCambioInput={manejarCambioInput}
+          agregarProveedor={agregarProveedor}
           errorCarga={errorCarga}
         />
 
@@ -122,17 +246,15 @@ const Proveedor = () => {
           mostrarModalEdicion={mostrarModalEdicion}
           setMostrarModalEdicion={setMostrarModalEdicion}
           proveedorEditado={proveedorEditado}
-          manejarCambioInputEdicion={(e) =>
-            setProveedorEditado({ ...proveedorEditado, [e.target.name]: e.target.value })
-          }
-          actualizarProveedor={obtenerProveedor}
+          manejarCambioInputEdicion={manejarCambioInputEdicion}
+          actualizarProveedor={actualizarProveedor}
           errorCarga={errorCarga}
         />
 
         <ModalEliminacionProveedor
           mostrarModalEliminacion={mostrarModalEliminacion}
           setMostrarModalEliminacion={setMostrarModalEliminacion}
-          eliminarProveedor={obtenerProveedor}
+          eliminarProveedor={eliminarProveedor}
         />
 
         <Paginacion

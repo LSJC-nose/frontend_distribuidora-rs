@@ -21,7 +21,7 @@ const ModalEdicionProducto = ({
             <Form.Control
               type="text"
               name="nombreProducto"
-              value={productoEditado.nombreProducto}
+              value={productoEditado?.nombreProducto || ""}
               onChange={manejarCambioInputEdicion}
               required
             />
@@ -31,7 +31,7 @@ const ModalEdicionProducto = ({
             <Form.Control
               type="number"
               name="Stock"
-              value={productoEditado.Stock}
+              value={productoEditado?.Stock || ""}
               onChange={manejarCambioInputEdicion}
               required
             />
@@ -42,7 +42,7 @@ const ModalEdicionProducto = ({
               type="number"
               step="0.01"
               name="PrecioCompra"
-              value={productoEditado.PrecioCompra}
+              value={productoEditado?.PrecioCompra || ""}
               onChange={manejarCambioInputEdicion}
               required
             />
@@ -53,7 +53,7 @@ const ModalEdicionProducto = ({
               type="number"
               step="0.01"
               name="PrecioVenta"
-              value={productoEditado.PrecioVenta}
+              value={productoEditado?.PrecioVenta || ""}
               onChange={manejarCambioInputEdicion}
               required
             />
@@ -63,7 +63,7 @@ const ModalEdicionProducto = ({
             <Form.Control
               type="text"
               name="Descripcion"
-              value={productoEditado.Descripcion}
+              value={productoEditado?.Descripcion || ""}
               onChange={manejarCambioInputEdicion}
               required
             />
@@ -73,7 +73,7 @@ const ModalEdicionProducto = ({
             <Form.Control
               type="text"
               name="UbicacionFotografia"
-              value={productoEditado.UbicacionFotografia}
+              value={productoEditado?.UbicacionFotografia || ""}
               onChange={manejarCambioInputEdicion}
               required
             />

@@ -23,7 +23,7 @@ const ModalRegistroProveedor = ({
               name="NombreProveedor"
               value={nuevoProveedor.NombreProveedor}
               onChange={manejarCambioInput}
-              placeholder="Ingresa el nombre"
+              placeholder="Ingresa el nombredel proveedor"
               required
             />
           </Form.Group>

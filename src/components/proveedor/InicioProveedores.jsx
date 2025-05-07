@@ -6,7 +6,7 @@ const InicioProveedores = ({
   cargando,
   error,
   abrirModalEdicion,
-  abrirModalEliminacion,
+  abrirModalEliminacion
 }) => {
   if (cargando) return <p>Cargando proveedores...</p>;
   if (error) return <p className="text-danger">Error: {error}</p>;
@@ -41,13 +41,14 @@ const InicioProveedores = ({
                 >
                   <i className="bi bi-pencil"></i>
                 </Button>
-                <Button
-                  variant="outline-danger"
-                  size="sm"
-                  onClick={() => abrirModalEliminacion(proveedor)}
-                >
-                  <i className="bi bi-trash"></i>
-                </Button>
+
+               <Button
+                    variant="outline-danger"
+                    size="sm"
+                    onClick={() => abrirModalEliminacion(proveedor)}
+                  >
+                    <i className="bi bi-trash"></i>
+                  </Button>
               </td>
             </tr>
           ))}

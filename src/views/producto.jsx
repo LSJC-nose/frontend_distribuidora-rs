@@ -8,61 +8,49 @@ import ModalEliminacionProducto from '../components/producto/ModalEliminacionPro
 import Paginacion from '../components/ordenamiento/Paginacion';
 import CuadroBusquedas from '../components/busquedas/CuadroBusquedas';
 
+// Declaración del componente Producto
 const Producto = () => {
   // Estados para manejar los datos, carga y errores
   const [listaProducto, setListaProducto] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [errorCarga, setErrorCarga] = useState(null);
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [productoEditado, setProductoEditado] = useState(null);
+  const [mostrarModalEdicion, setMostrarModalEdicion] = useState(false);
+  const [productoAEliminar, setProductoAEliminar] = useState(null);
+  const [mostrarModalEliminacion, setMostrarModalEliminacion] = useState(false);
+  const [nuevoProducto, setNuevoProducto] = useState({
+    nombreProducto: '',
+    Descripcion: '',
+    PrecioCompra: '',
+    PrecioVenta: '',
+    Stock: '',
+    ID_Categoria: '',
+    UbicacionFotografia: ''
+  });
 
-  // Estados para búsqueda y paginación
-  const [productosFiltrados, setProductosFiltrados] = useState([]);
-  const [textoBusqueda, setTextoBusqueda] = useState("");
+  // Variables de paginación
   const [paginaActual, establecerPaginaActual] = useState(1);
   const elementosPorPagina = 5;
 
-  // Estados para producto
-  const [nuevoProducto, setNuevoProducto] = useState({
-    nombreProducto: '',
-    Stock: '',
-    PrecioCompra: '',
-    PrecioVenta: '',
-    Descripcion: '',
-    UbicacionFotografia: '',
-    ID_Categoria: '',
-    ID_Catalogo: ''
-  });
+  // Variables de búsqueda
+  const [productosFiltrados, setProductosFiltrados] = useState([]);
+  const [textoBusqueda, setTextoBusqueda] = useState("");
 
-  const [productoEditado, setProductoEditado] = useState({
-    nombreProducto: '',
-    Stock: '',
-    PrecioCompra: '',
-    PrecioVenta: '',
-    Descripcion: '',
-    UbicacionFotografia: '',
-    ID_Categoria: '',
-    ID_Catalogo: ''
-  });
-  
-  const [productoAEliminar, setProductoAEliminar] = useState(null);
-
-  // Estados para modales
-  const [mostrarModal, setMostrarModal] = useState(false);
-  const [mostrarModalEdicion, setMostrarModalEdicion] = useState(false);
-  const [mostrarModalEliminacion, setMostrarModalEliminacion] = useState(false);
-
-  // Obtener productos al montar el componente
+  // Obtención de datos al montar la vista
   useEffect(() => {
-    obtenerProductos();
+    obtenerProducto();
   }, []);
 
-  const obtenerProductos = async () => {
+  // Método para obtener productos desde la API
+  const obtenerProducto = async () => {
     try {
       const respuesta = await fetch('http://localhost:3000/api/productos');
       if (!respuesta.ok) throw new Error('Error al cargar los productos');
 
       const datos = await respuesta.json();
       setListaProducto(datos);
-      setProductosFiltrados(datos);
+      setProductosFiltrados(datos); // Se actualiza la lista filtrada con los datos obtenidos
       setCargando(false);
     } catch (error) {
       setErrorCarga(error.message);
@@ -70,25 +58,142 @@ const Producto = () => {
     }
   };
 
-  // Manejo de búsqueda
+  // Método para manejar cambios en la búsqueda
   const manejarCambioBusqueda = (e) => {
     const texto = e.target.value.toLowerCase();
     setTextoBusqueda(texto);
 
-    const filtrados = listaProducto.filter(
+    const filtradas = listaProducto.filter(
       (producto) =>
         producto.nombreProducto.toLowerCase().includes(texto) ||
-        producto.Descripcion.toLowerCase().includes(texto)
+        producto.Descripcion.toLowerCase().includes(texto) ||
+        producto.PrecioCompra.toString().includes(texto) ||
+        producto.PrecioVenta.toString().includes(texto)
     );
 
-    setProductosFiltrados(filtrados);
+    setProductosFiltrados(filtradas);
   };
 
-  // Cálculo de paginación
+  // Cálculo de elementos paginados
   const productosPaginados = productosFiltrados.slice(
     (paginaActual - 1) * elementosPorPagina,
     paginaActual * elementosPorPagina
   );
+
+  // Manejo la inserción de un nuevo producto
+  const agregarProducto = async () => {
+    if (!nuevoProducto.nombreProducto || !nuevoProducto.Descripcion || !nuevoProducto.PrecioCompra || !nuevoProducto.PrecioVenta || !nuevoProducto.Stock || !nuevoProducto.ID_Categoria ) {
+      setErrorCarga("Por favor, completa todos los campos antes de guardar.");
+      return;
+    }
+
+    try {
+      const respuesta = await fetch('http://localhost:3000/api/registrarproducto', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(nuevoProducto),
+      });
+
+      if (!respuesta.ok) {
+        throw new Error('Error al agregar el producto');
+      }
+
+      await obtenerProducto(); // Refresca toda la lista desde el servidor
+      setNuevoProducto({ 
+        nombreProducto: '',
+        Descripcion: '',
+        PrecioCompra: '',
+        PrecioVenta: '',
+        Stock: '',
+        ID_Categoria: '',
+        UbicacionFotografia: ''
+      });
+      setMostrarModal(false);
+      setErrorCarga(null);
+    } catch (error) {
+      setErrorCarga(error.message);
+    }
+  };
+
+  const manejarCambioInput = (e) => {
+    const { name, value } = e.target;
+    setNuevoProducto(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const manejarCambioInputEdicion = (e) => {
+    const { name, value } = e.target;
+    setProductoEditado(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  //Actualizar producto
+  const actualizarProducto = async () => {
+    if (!productoEditado?.nombreProducto || !productoEditado?.Descripcion 
+      || !productoEditado?.PrecioCompra || !productoEditado?.PrecioVenta || !productoEditado?.Stock || !productoEditado?.ID_Categoria ) {
+      setErrorCarga("Por favor, completa todos los campos antes de guardar.");
+      return;
+    }
+
+    try {
+      const respuesta = await fetch(`http://localhost:3000/api/actualizarproducto/${productoEditado.ID_Producto}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(productoEditado),
+      });
+
+      if (!respuesta.ok) {
+        throw new Error('Error al actualizar el producto');
+      }
+
+      await obtenerProducto();
+      setMostrarModalEdicion(false);
+      setProductoEditado(null);
+      setErrorCarga(null);
+    } catch (error) {
+      setErrorCarga(error.message);
+    }
+  };
+
+  const abrirModalEdicion = (producto) => {
+    setProductoEditado(producto);
+    setMostrarModalEdicion(true);
+  };
+
+  const eliminarProducto = async () => {
+    if (!productoAEliminar) return;
+
+    try {
+      const respuesta = await fetch(`http://localhost:3000/api/eliminarproducto/${productoAEliminar.ID_Producto}`, {
+        method: 'DELETE',
+      });
+
+      if (!respuesta.ok) {
+        throw new Error('Error al eliminar el producto');
+      }
+
+      await obtenerProducto(); // Refresca la lista
+      setMostrarModalEliminacion(false);
+      establecerPaginaActual(1); // Regresa a la primera página
+      setProductoAEliminar(null);
+      setErrorCarga(null);
+    } catch (error) {
+      setErrorCarga(error.message);
+    }
+  };
+
+  const abrirModalEliminacion = (producto) => {
+    setProductoAEliminar(producto);
+    setMostrarModalEliminacion(true);
+  };
 
   return (
     <>
@@ -111,43 +216,39 @@ const Producto = () => {
         <br/><br/>
 
         <InicioProductos
-          productos={productosPaginados}
-          cargando={cargando}
-          error={errorCarga}
-          abrirModalEdicion={(producto) => {
-            setProductoEditado(producto);
-            setMostrarModalEdicion(true);
-          }}
-          abrirModalEliminacion={(producto) => {
-            setProductoAEliminar(producto);
-            setMostrarModalEliminacion(true);
-          }}
+          productos={productosPaginados}  
+          cargando={cargando} 
+          error={errorCarga} 
+          totalElementos={listaProducto.length} // Total de elementos
+          elementosPorPagina={elementosPorPagina} // Elementos por página
+          paginaActual={paginaActual} // Página actual
+          establecerPaginaActual={establecerPaginaActual} // Método para cambiar página
+          abrirModalEliminacion={abrirModalEliminacion} // Método para abrir modal de eliminación
+          abrirModalEdicion={abrirModalEdicion} // Método para abrir modal de edición
         />
 
-            <ModalRegistroProducto
-              mostrarModal={mostrarModal}
-              setMostrarModal={setMostrarModal}
-              nuevoProducto={nuevoProducto} 
-              setNuevoProducto={setNuevoProducto} 
-              agregarProducto={obtenerProductos}
-              errorCarga={errorCarga}
-            />
+        <ModalRegistroProducto
+          mostrarModal={mostrarModal}
+          setMostrarModal={setMostrarModal}
+          nuevoProducto={nuevoProducto}
+          manejarCambioInput={manejarCambioInput}
+          agregarProducto={agregarProducto}
+          errorCarga={errorCarga}
+        />
 
         <ModalEdicionProducto
           mostrarModalEdicion={mostrarModalEdicion}
           setMostrarModalEdicion={setMostrarModalEdicion}
           productoEditado={productoEditado}
-          manejarCambioInputEdicion={(e) =>
-            setProductoEditado({ ...productoEditado, [e.target.name]: e.target.value })
-          }
-          actualizarProducto={obtenerProductos}
+          manejarCambioInputEdicion={manejarCambioInputEdicion}
+          actualizarProducto={actualizarProducto}
           errorCarga={errorCarga}
         />
 
         <ModalEliminacionProducto
           mostrarModalEliminacion={mostrarModalEliminacion}
           setMostrarModalEliminacion={setMostrarModalEliminacion}
-          eliminarProducto={obtenerProductos}
+          eliminarProducto={eliminarProducto}
         />
 
         <Paginacion
