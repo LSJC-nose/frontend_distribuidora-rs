@@ -7,7 +7,7 @@ const ModalRegistroProducto = ({
   nuevoProducto,
   manejarCambioInput,
   agregarProducto,
-  errorCarga,
+  errorCarga, 
 }) => {
   return (
     <Modal show={mostrarModal} onHide={() => setMostrarModal(false)}>
