@@ -195,15 +195,16 @@ const ModalRegistroVenta = ({
                     <th>Cantidad</th>
                     <th>Precio Unitario</th>
                     <th>Subtotal</th>
+               
                   </tr>
                 </thead>
                 <tbody>
                   {detallesVenta.map((detalle, index) => (
                     <tr key={index}>
-                      <td>{detalle.nombreProducto}</td>
-                      <td>{detalle.Cantidad}</td>
+                      <td>{detalle.nombre_producto}</td>
+                      <td>{detalle.cantidad}</td>
                       <td>{detalle.precio_unitario.toFixed(2)}</td>
-                      <td>{(detalle.Cantidad * detalle.precio_unitario).toFixed(2)}</td>
+                      <td>{(detalle.cantidad * detalle.precio_unitario).toFixed(2)}</td>
                     </tr>
                   ))}
                 </tbody>

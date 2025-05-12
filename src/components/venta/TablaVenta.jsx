@@ -34,7 +34,7 @@ const TablaVentas = ({ obtenerDetalles, ventas, cargando, error, abrirModalElimi
               <Button
                 variant="outline-success"
                 size="sm"
-                onClick={() => obtenerDetalles(venta.NumeroFactura)}
+                onClick={() => obtenerDetalles(venta.id_venta)}
               >
                 <i className="bi bi-list-ul"></i>
               </Button>

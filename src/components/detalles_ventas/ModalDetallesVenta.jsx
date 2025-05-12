@@ -33,10 +33,10 @@ const ModalDetallesVenta = ({ mostrarModal, setMostrarModal, detalles, cargandoD
                   <tr key={detalle.ID_Detalle}>
                     <td>{detalle.ID_Detalle}</td>
                     <td>{detalle.nombreProducto}</td>
-                    <td>{detalle.Descripcion_producto}</td>
+                    <td>{detalle.Descripcion}</td>
                     <td>{detalle.Cantidad}</td>
-                    <td>C$ {detalle.precioVenta.toFixed(2)}</td>
-                    <td>C$ {detalle.subtotal.toFixed(2)}</td>
+                    <td>C$ {detalle.PrecioVenta.toFixed(2)}</td>
+                    <td>C$ {detalle.total_venta.toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
