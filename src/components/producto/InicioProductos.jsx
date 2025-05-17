@@ -12,7 +12,6 @@ const InicioProductos = ({ productos, cargando, error, abrirModalEdicion, abrirM
         <thead>
           <tr>
             <th>ID</th>
-            <th>Imagen</th>
             <th>Nombre</th>
             <th>Stock</th>
             <th>Precio Compra</th>
@@ -25,14 +24,22 @@ const InicioProductos = ({ productos, cargando, error, abrirModalEdicion, abrirM
           {productos.map((producto) => (
             <tr key={producto.ID_Producto}>
               <td>{producto.ID_Producto}</td>
-              <td>
-                <Image src={producto.UbicacionFotografia} alt={producto.nombreProducto} thumbnail style={{ width: "50px", height: "50px" }} />
-              </td>
               <td>{producto.nombreProducto}</td>
               <td>{producto.Stock}</td>
               <td>{producto.PrecioCompra}</td>
               <td>{producto.PrecioVenta}</td>
               <td>{producto.Descripcion}</td>
+               <td>
+            {producto.UbicacionFotografia ? (
+              <img
+                src={`data:image/png;base64,${producto.UbicacionFotografia}`}
+                alt={producto.nombreProducto}
+                style={{ maxWidth: '100px' }}
+              />
+            ) : (
+              'Sin imagen'
+            )}
+          </td>
               <td>
                 <Button variant="outline-warning" size="sm" className="me-2" onClick={() => abrirModalEdicion(producto)}>
                   <i className="bi bi-pencil"></i>

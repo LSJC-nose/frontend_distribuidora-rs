@@ -233,7 +233,9 @@ const actualizarVenta = async (ventaActualizada, detalles) => {
   // Renderizado de la vista
   return (
     <>
+    
       <Container className="mt-5">
+  <p>d</p>
         <Row>
           <Col lg={2} md={4} sm={4} xs={5}>
             <Button variant="primary" onClick={() => setMostrarModalRegistro(true)} style={{ width: "100%" }}>

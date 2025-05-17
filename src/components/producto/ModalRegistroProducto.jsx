@@ -88,17 +88,27 @@ const ModalRegistroProducto = ({
             />
           </Form.Group>
 
-          <Form.Group className="mb-3" controlId="formUbicacionFotografia">
-            <Form.Label>Ubicación de Fotografía</Form.Label>
-            <Form.Control
-              type="text"
-              name="UbicacionFotografia"
-              value={nuevoProducto.UbicacionFotografia}
-              onChange={manejarCambioInput}
-              placeholder="Ingresa la ubicación de la fotografía"
-              required
-            />
-          </Form.Group>
+         <Form.Group className="mb-3" controlId="formImagenProducto">
+  <Form.Label>Imagen</Form.Label>
+  <Form.Control
+    type="file"
+    name="UbicacionFotografia"
+    accept="image/*"
+    onChange={(e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          manejarCambioInput({
+            target: { name: 'UbicacionFotografia', value: reader.result.split(',')[1] } // Extrae solo la parte Base64
+          });
+        };
+        reader.readAsDataURL(file);
+      }
+    }}
+  />
+</Form.Group>
+
 
           {errorCarga && (
             <div className="text-danger mt-2">{errorCarga}</div>
