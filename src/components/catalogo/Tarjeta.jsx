@@ -1,6 +1,7 @@
 import React from "react";
 import { Col, Card, Badge, Stack } from 'react-bootstrap';
 import Paginacion from "../ordenamiento/Paginacion";
+import "../../index.css"
 
 const Tarjeta = ({ indice, 
   nnombreProducto, 
@@ -16,10 +17,13 @@ const Tarjeta = ({ indice,
   return (
     <>
     <Col lg={3} className="mt-3">
-      <Card border="">
+      <Card border=""
+      className="animate__animated animate__backInDown" >
         <Card.Img
           variant="top"
           src={`data:image/png;base64,${UbicacionFotografia}`}
+          //src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVlmWueUsfk-7eDhFEOyKZAUkQVLj2fpWqSw&s "
+          className="item"
         />
         <Card.Body>
           <Card.Title>

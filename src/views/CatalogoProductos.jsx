@@ -21,6 +21,11 @@ const CatalogoProductos = () => {
     }
   };
 
+
+
+
+  
+
   useEffect(() => {
     obtenerProductos();
   }, []);

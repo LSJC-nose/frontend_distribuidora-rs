@@ -98,6 +98,8 @@ const Producto = () => {
 
       if (!respuesta.ok) {
         throw new Error('Error al agregar el producto');
+        console.log(respuesta);
+        
       }
 
       await obtenerProducto(); // Refresca toda la lista desde el servidor
