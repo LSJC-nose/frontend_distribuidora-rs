@@ -234,7 +234,7 @@ const actualizarVenta = async (ventaActualizada, detalles) => {
   return (
     <>
     
-      <Container className="mt-5">
+      <Container className="mt-5" >
   <p>d</p>
         <Row>
           <Col lg={2} md={4} sm={4} xs={5}>

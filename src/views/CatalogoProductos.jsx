@@ -22,10 +22,6 @@ const CatalogoProductos = () => {
   };
 
 
-
-
-  
-
   useEffect(() => {
     obtenerProductos();
   }, []);
@@ -36,8 +32,8 @@ const CatalogoProductos = () => {
   return (
 
     <Container className="mt-5">
-        <b>cds</b>
-      <h4>Catálogo de Productos</h4>
+        <h>.</h>
+      <h2>Catálogo de Productos</h2>
       <Row>
         {listaProductos.map((producto, indice) => (
           <Tarjeta
