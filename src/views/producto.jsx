@@ -31,7 +31,7 @@ const Producto = () => {
 
   // Variables de paginación
   const [paginaActual, establecerPaginaActual] = useState(1);
-  const elementosPorPagina = 5;
+  const elementosPorPagina = 4;
 
   // Variables de búsqueda
   const [productosFiltrados, setProductosFiltrados] = useState([]);
@@ -40,6 +40,7 @@ const Producto = () => {
   // Obtención de datos al montar la vista
   useEffect(() => {
     obtenerProducto();
+     
   }, []);
 
   // Método para obtener productos desde la API
@@ -60,6 +61,7 @@ const Producto = () => {
 
   // Método para manejar cambios en la búsqueda
   const manejarCambioBusqueda = (e) => {
+    establecerPaginaActual(1); // Reiniciar a página 1
     const texto = e.target.value.toLowerCase();
     setTextoBusqueda(texto);
 
@@ -73,6 +75,7 @@ const Producto = () => {
 
     setProductosFiltrados(filtradas);
   };
+
 
   // Cálculo de elementos paginados
   const productosPaginados = productosFiltrados.slice(

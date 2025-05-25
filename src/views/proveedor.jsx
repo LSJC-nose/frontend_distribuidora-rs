@@ -58,6 +58,7 @@ const Proveedor = () => {
 
   // Método para manejar cambios en la búsqueda
   const manejarCambioBusqueda = (e) => {
+    establecerPaginaActual(1); // Reiniciar a página 1
     const texto = e.target.value.toLowerCase();
     setTextoBusqueda(texto);
 
