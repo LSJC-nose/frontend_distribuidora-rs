@@ -15,41 +15,44 @@ const CatalogoProductos = () => {
   const [paginaActual, establecerPaginaActual] = useState(1);
   const elementosPorPagina = 4;
 
-  // Obtener productos
-  const obtenerProductos = async () => {
-    try {
-      const respuesta = await fetch('http://localhost:3000/api/productos');
-      if (!respuesta.ok) throw new Error('Error al cargar los productos');
-      const datos = await respuesta.json();
-      setListaProductos(datos);
-      setProductosFiltrados(datos); // Mostrar todos al inicio
-      setCargando(false);
-    } catch (error) {
-      setErrorCarga(error.message);
-      setCargando(false);
-    }
-  };
-
   useEffect(() => {
-    obtenerProductos();
-  }, []);
+    const obtenerYFiltrarProductos = async () => {
+      // Si la lista de productos está vacía, intenta obtenerlos
+      if (listaProductos.length === 0) {
+        try {
+          const respuesta = await fetch('http://localhost:3000/api/productos');
+          if (!respuesta.ok) throw new Error('Error al cargar los productos');
+          const datos = await respuesta.json();
+          setListaProductos(datos);
+          setProductosFiltrados(datos); // Muestra todos los productos inicialmente
+          setCargando(false);
+        } catch (error) {
+          setErrorCarga(error.message);
+          setCargando(false);
+          return; // Sale de la función si hay un error de carga
+        }
+      }
 
-  // Filtrado automático cuando cambia el texto de búsqueda
-  useEffect(() => {
-    establecerPaginaActual(1); // Reiniciar a página 1
-    if (textoBusqueda.trim() === "") {
-      setProductosFiltrados(listaProductos);
-    } else {
-      const texto = textoBusqueda.toLowerCase();
-      const filtradas = listaProductos.filter((producto) =>
-        producto.nombreProducto.toLowerCase().includes(texto) ||
-        producto.Descripcion.toLowerCase().includes(texto) ||
-        producto.PrecioCompra.toString().includes(texto) ||
-        producto.PrecioVenta.toString().includes(texto)
-      );
-      setProductosFiltrados(filtradas);
-    }
-  }, [textoBusqueda, listaProductos]);
+      // Reinicia la página a 1 cada vez que cambia el texto de búsqueda
+      establecerPaginaActual(1);
+
+      // Lógica de filtrado
+      if (textoBusqueda.trim() === "") {
+        setProductosFiltrados(listaProductos);
+      } else {
+        const texto = textoBusqueda.toLowerCase();
+        const filtradas = listaProductos.filter((producto) =>
+          producto.nombreProducto.toLowerCase().includes(texto) ||
+          producto.Descripcion.toLowerCase().includes(texto) ||
+          producto.PrecioCompra.toString().includes(texto) ||
+          producto.PrecioVenta.toString().includes(texto)
+        );
+        setProductosFiltrados(filtradas);
+      }
+    };
+
+    obtenerYFiltrarProductos();
+  }, [textoBusqueda, listaProductos]); // Dependencias: re-ejecuta cuando cambia el texto de búsqueda o la lista de productos
 
   const manejarCambioBusqueda = (e) => {
     setTextoBusqueda(e.target.value);
@@ -91,12 +94,12 @@ const CatalogoProductos = () => {
           />
         ))}
       </Row>
-  <Paginacion
-            elementosPorPagina={elementosPorPagina}
-            totalElementos={productosFiltrados.length}
-            paginaActual={paginaActual}
-            establecerPaginaActual={establecerPaginaActual}
-          />
+      <Paginacion
+        elementosPorPagina={elementosPorPagina}
+        totalElementos={productosFiltrados.length}
+        paginaActual={paginaActual}
+        establecerPaginaActual={establecerPaginaActual}
+      />
     </Container>
   );
 };
