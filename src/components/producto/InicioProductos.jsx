@@ -17,6 +17,7 @@ const InicioProductos = ({ productos, cargando, error, abrirModalEdicion, abrirM
             <th>Precio Compra</th>
             <th>Precio Venta</th>
             <th>Descripción</th>
+            <th>Imagenes</th>
             <th>Acciones</th>
           </tr>
         </thead>

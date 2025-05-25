@@ -10,6 +10,7 @@ import Ventas from "./views/venta_factura"
 import Cliente from "./views/cliente";
 import Compras from "./views/compra_factura";
 import Catalogo from "./views/CatalogoProductos";
+import Dashboard from "./views/Dashboard";
 
 const App = () => {
   return (
@@ -26,6 +27,7 @@ const App = () => {
           <Route path="/cliente" element={<Cliente />} />
           <Route path="/compra_factura" element={<Compras />} />
           <Route path="/CatalogoProductos" element={<Catalogo />} />
+          <Route path="/Dashboard" element={<Dashboard />} />
         </Routes>
       </main>
     </Router>
