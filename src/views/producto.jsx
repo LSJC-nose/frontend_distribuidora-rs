@@ -1,4 +1,3 @@
-// Importaciones necesarias para la vista
 import React, { useState, useEffect } from 'react';
 import InicioProductos from '../components/producto/InicioProductos';
 import { Container, Button, Row, Col } from "react-bootstrap";
@@ -7,10 +6,12 @@ import ModalEdicionProducto from '../components/producto/ModalEdicionProducto';
 import ModalEliminacionProducto from '../components/producto/ModalEliminacionProducto';
 import Paginacion from '../components/ordenamiento/Paginacion';
 import CuadroBusquedas from '../components/busquedas/CuadroBusquedas';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
-// Declaración del componente Producto
 const Producto = () => {
-  // Estados para manejar los datos, carga y errores
   const [listaProducto, setListaProducto] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [errorCarga, setErrorCarga] = useState(null);
@@ -28,30 +29,22 @@ const Producto = () => {
     ID_Categoria: '',
     UbicacionFotografia: ''
   });
-
-  // Variables de paginación
   const [paginaActual, establecerPaginaActual] = useState(1);
   const elementosPorPagina = 4;
-
-  // Variables de búsqueda
   const [productosFiltrados, setProductosFiltrados] = useState([]);
   const [textoBusqueda, setTextoBusqueda] = useState("");
 
-  // Obtención de datos al montar la vista
   useEffect(() => {
     obtenerProducto();
-     
   }, []);
 
-  // Método para obtener productos desde la API
   const obtenerProducto = async () => {
     try {
       const respuesta = await fetch('http://localhost:3000/api/productos');
       if (!respuesta.ok) throw new Error('Error al cargar los productos');
-
       const datos = await respuesta.json();
       setListaProducto(datos);
-      setProductosFiltrados(datos); // Se actualiza la lista filtrada con los datos obtenidos
+      setProductosFiltrados(datos);
       setCargando(false);
     } catch (error) {
       setErrorCarga(error.message);
@@ -59,12 +52,10 @@ const Producto = () => {
     }
   };
 
-  // Método para manejar cambios en la búsqueda
   const manejarCambioBusqueda = (e) => {
-    establecerPaginaActual(1); // Reiniciar a página 1
+    establecerPaginaActual(1);
     const texto = e.target.value.toLowerCase();
     setTextoBusqueda(texto);
-
     const filtradas = listaProducto.filter(
       (producto) =>
         producto.nombreProducto.toLowerCase().includes(texto) ||
@@ -72,18 +63,133 @@ const Producto = () => {
         producto.PrecioCompra.toString().includes(texto) ||
         producto.PrecioVenta.toString().includes(texto)
     );
-
     setProductosFiltrados(filtradas);
   };
 
+  const generarPDFProductos = () => {
+    try {
+      if (!productosFiltrados || productosFiltrados.length === 0) {
+        alert('No hay productos para generar el PDF.');
+        return;
+      }
+      const doc = new jsPDF();
+      doc.setFillColor(0, 51, 102);
+      doc.rect(0, 0, 210, 40, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(28);
+      doc.text('Reporte de Productos', 105, 25, null, null, 'center');
 
-  // Cálculo de elementos paginados
+      const encabezados = [['ID', 'Nombre', 'Stock', 'Precio Compra', 'Precio Venta', 'Descripción', 'Categoría']];
+      const datos = productosFiltrados.map(producto => [
+        producto.ID_Producto || 'N/A',
+        producto.nombreProducto || 'N/A',
+        producto.Stock || 'N/A',
+        producto.PrecioCompra || 'N/A',
+        producto.PrecioVenta || 'N/A',
+        producto.Descripcion || 'N/A',
+        producto.ID_Categoria || 'N/A'
+      ]);
+
+      autoTable(doc, {
+        head: encabezados,
+        body: datos,
+        startY: 50,
+        theme: 'grid',
+        styles: { fontSize: 10, cellPadding: 2 },
+        headStyles: { fillColor: [0, 51, 102], textColor: [255, 255, 255] },
+        margin: { top: 50 }
+      });
+
+      const fecha = new Date().toISOString().slice(0, 10);
+      doc.save(`Productos_${fecha}.pdf`);
+    } catch (error) {
+      console.error('Error al generar el PDF:', error);
+      alert('Error al generar el PDF: ' + error.message);
+    }
+  };
+
+  const generarPDFDetalleProducto = (producto) => {
+    try {
+      if (!producto) {
+        alert('No se proporcionó un producto válido.');
+        return;
+      }
+      const doc = new jsPDF();
+      doc.setFillColor(0, 51, 102);
+      doc.rect(0, 0, 210, 40, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(28);
+      doc.text(`Detalle de Producto: ${producto.nombreProducto || 'N/A'}`, 105, 25, null, null, 'center');
+
+      if (producto.UbicacionFotografia) {
+        try {
+          doc.addImage(`data:image/png;base64,${producto.UbicacionFotografia}`, 'PNG', 10, 50, 50, 50);
+        } catch (error) {
+          console.error('Error al agregar la imagen:', error);
+        }
+      }
+
+      const datos = [
+        ['ID', producto.ID_Producto || 'N/A'],
+        ['Nombre', producto.nombreProducto || 'N/A'],
+        ['Stock', producto.Stock || 'N/A'],
+        ['Precio Compra', producto.PrecioCompra || 'N/A'],
+        ['Precio Venta', producto.PrecioVenta || 'N/A'],
+        ['Descripción', producto.Descripcion || 'N/A'],
+        ['Categoría', producto.ID_Categoria || 'N/A']
+      ];
+
+      autoTable(doc, {
+        body: datos,
+        startY: producto.UbicacionFotografia ? 110 : 50,
+        theme: 'grid',
+        styles: { fontSize: 10, cellPadding: 2 },
+        headStyles: { fillColor: [0, 51, 102], textColor: [255, 255, 255] }
+      });
+
+      const fecha = new Date().toISOString().slice(0, 10);
+      doc.save(`Producto_${producto.nombreProducto || 'SinNombre'}_${fecha}.pdf`);
+    } catch (error) {
+      console.error('Error al generar el PDF de detalle:', error);
+      alert('Error al generar el PDF de detalle: ' + error.message);
+    }
+  };
+
+  const exportarExcelProductos = () => {
+    try {
+      if (!productosFiltrados || productosFiltrados.length === 0) {
+        alert('No hay productos para generar el Excel.');
+        return;
+      }
+      const datos = productosFiltrados.map(producto => ({
+        ID: producto.ID_Producto || 'N/A',
+        Nombre: producto.nombreProducto || 'N/A',
+        Stock: producto.Stock || 'N/A',
+        'Precio Compra': producto.PrecioCompra || 'N/A',
+        'Precio Venta': producto.PrecioVenta || 'N/A',
+        Descripción: producto.Descripcion || 'N/A',
+        Categoría: producto.ID_Categoria || 'N/A'
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(datos);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Productos');
+
+      const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+      const nombreArchivo = `Productos_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+      saveAs(blob, nombreArchivo);
+    } catch (error) {
+      console.error('Error al generar el Excel:', error);
+      alert('Error al generar el Excel: ' + error.message);
+    }
+  };
+
   const productosPaginados = productosFiltrados.slice(
     (paginaActual - 1) * elementosPorPagina,
     paginaActual * elementosPorPagina
   );
 
-  // Manejo la inserción de un nuevo producto
   const agregarProducto = async () => {
     if (!nuevoProducto.nombreProducto || !nuevoProducto.Descripcion || !nuevoProducto.PrecioCompra || !nuevoProducto.PrecioVenta || !nuevoProducto.Stock || !nuevoProducto.ID_Categoria ) {
       setErrorCarga("Por favor, completa todos los campos antes de guardar.");
@@ -101,11 +207,9 @@ const Producto = () => {
 
       if (!respuesta.ok) {
         throw new Error('Error al agregar el producto');
-        console.log(respuesta);
-        
       }
 
-      await obtenerProducto(); // Refresca toda la lista desde el servidor
+      await obtenerProducto();
       setNuevoProducto({ 
         nombreProducto: '',
         Descripcion: '',
@@ -138,7 +242,6 @@ const Producto = () => {
     }));
   };
 
-  //Actualizar producto
   const actualizarProducto = async () => {
     if (!productoEditado?.nombreProducto || !productoEditado?.Descripcion 
       || !productoEditado?.PrecioCompra || !productoEditado?.PrecioVenta || !productoEditado?.Stock || !productoEditado?.ID_Categoria ) {
@@ -185,9 +288,9 @@ const Producto = () => {
         throw new Error('Error al eliminar el producto');
       }
 
-      await obtenerProducto(); // Refresca la lista
+      await obtenerProducto();
       setMostrarModalEliminacion(false);
-      establecerPaginaActual(1); // Regresa a la primera página
+      establecerPaginaActual(1);
       setProductoAEliminar(null);
       setErrorCarga(null);
     } catch (error) {
@@ -201,8 +304,8 @@ const Producto = () => {
   };
 
   return (
-    < >
-      <Container className="mt-5" >
+    <>
+      <Container className="mt-5">
         <br />
         <h4>Productos</h4>
         <Row>
@@ -211,7 +314,25 @@ const Producto = () => {
               Nuevo Producto
             </Button>
           </Col>
-          <Col lg={5} md={8} sm={8} xs={7}>
+          <Col lg={2} md={4} sm={4} xs={5}>
+            <Button
+              variant="secondary"
+              onClick={generarPDFProductos}
+              style={{ width: "100%" }}
+            >
+              Generar reporte PDF
+            </Button>
+          </Col>
+          <Col lg={2} md={4} sm={4} xs={5}>
+            <Button
+              variant="secondary"
+              onClick={exportarExcelProductos}
+              style={{ width: "100%" }}
+            >
+              Generar Excel
+            </Button>
+          </Col>
+          <Col lg={6} md={8} sm={8} xs={7}>
             <CuadroBusquedas
               textoBusqueda={textoBusqueda}
               manejarCambioBusqueda={manejarCambioBusqueda}
@@ -221,15 +342,12 @@ const Producto = () => {
         <br/><br/>
 
         <InicioProductos
-          productos={productosPaginados}  
-          cargando={cargando} 
-          error={errorCarga} 
-          totalElementos={listaProducto.length} // Total de elementos
-          elementosPorPagina={elementosPorPagina} // Elementos por página
-          paginaActual={paginaActual} // Página actual
-          establecerPaginaActual={establecerPaginaActual} // Método para cambiar página
-          abrirModalEliminacion={abrirModalEliminacion} // Método para abrir modal de eliminación
-          abrirModalEdicion={abrirModalEdicion} // Método para abrir modal de edición
+          productos={productosPaginados}
+          cargando={cargando}
+          error={errorCarga}
+          abrirModalEdicion={abrirModalEdicion}
+          abrirModalEliminacion={abrirModalEliminacion}
+          generarPDFDetalleProducto={generarPDFDetalleProducto}
         />
 
         <ModalRegistroProducto
