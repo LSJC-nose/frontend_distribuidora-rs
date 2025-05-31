@@ -238,8 +238,8 @@ const actualizarVenta = async (ventaActualizada, detalles) => {
   <p>d</p>
         <Row>
           <Col lg={2} md={4} sm={4} xs={5}>
-            <Button variant="primary" onClick={() => setMostrarModalRegistro(true)} style={{ width: "100%" }}>
-              Nueva Venta
+            <Button className='bi bi-cart4' variant="secondary" onClick={() => setMostrarModalRegistro(true)} style={{ width: "100%" }}>
+             
             </Button>
           </Col>
         </Row>

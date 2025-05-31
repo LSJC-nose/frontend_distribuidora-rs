@@ -1,9 +1,20 @@
 // Importaciones necesarias para el componente visual
 import React from 'react';
-import { Table } from 'react-bootstrap';
+import { Table, Button   } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Paginacion from '../ordenamiento/Paginacion';
 
-const TablaCompra = ({ compras, cargando, error }) => {
+const TablaCompra = ({ compras, 
+                       cargando, 
+                       error,
+                       obtenerDetalles,
+                       abrirModalActualizacion,
+                       abrirModalEliminacion,
+                       elementosPorPagina,
+                       totalElementos,
+                       paginaActual,
+                       establecerPaginaActual
+                      }) => {
   if (cargando) {
     return <div>Cargando compras...</div>; // Muestra mensaje mientras carga
   }
@@ -12,35 +23,61 @@ const TablaCompra = ({ compras, cargando, error }) => {
   }
 
   // Renderizado de la tabla con los datos recibidos
-  return (
+  return (<>
     <Table striped bordered hover responsive>
-      <thead>
-        <tr>
-          <th>ID Compra</th>
-          <th>ID Detalle</th>
-          <th>Fecha Compra</th>
-          <th>Proveedor</th>
-          <th>Producto</th>
-          <th>Cantidad</th>
-          <th>Precio Compra</th>
-          <th>Subtotal</th>
-        </tr>
-      </thead>
-      <tbody>
-        {compras.map((compra) => (
-          <tr key={`${venta.ID_CompraFactura}-${venta.ID_Compra}`}> {/* Clave única combinada */}
-            <td>{compra.NumeroFactura}</td>
-            <td>{compra.ID_Compra}</td>
-            <td>{compra.ID_Tiempo}</td>
-            <td>{compra.nombreProveedor}</td>
-            <td>{compra.nombreProducto}</td>
-            <td>{compra.Cantidad}</td>
-            <td>C$ {compra.Precio}</td>
-            <td>C$ {compra.Subtotal.toFixed(2)}</td>
-          </tr> 
+     <thead>
+          <tr>
+            <th>ID Compra</th>
+            <th>Fecha Compra</th>
+            <th>Proveedor</th>
+            <th>Total</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {compras.map((compra) => (
+            <tr key={`${compra.ID_CompraFactura}`}>
+              <td>{compra.ID_CompraFactura}</td>
+              <td>{compra.fecha_compra}</td>
+              <td>{compra.NombreProveedor}</td>
+              <td>C$ {compra.total_compra}</td>
+            <td>
+              <Button
+                variant="outline-success"
+                size="sm"
+                className="me-2"
+                onClick={() => obtenerDetalles(compra.ID_CompraFactura)}
+              >
+                <i className="bi bi-list-ul"></i>
+              </Button>
+              <Button
+                variant="outline-warning"
+                size="sm"
+                className="me-2"
+                onClick={() => abrirModalActualizacion(compra)}
+              >
+                <i className="bi bi-pencil"></i>
+              </Button>
+              <Button
+                variant="outline-danger"
+                size="sm"
+                onClick={() => abrirModalEliminacion(compra)}
+              >
+                <i className="bi bi-trash"></i>
+              </Button>
+            </td>
+          </tr>
         ))}
       </tbody>
     </Table>
+
+     <Paginacion
+  elementosPorPagina={elementosPorPagina}
+  totalElementos={totalElementos}
+  paginaActual={paginaActual}
+  establecerPaginaActual={establecerPaginaActual}
+/>
+    </>
   );
 };
 

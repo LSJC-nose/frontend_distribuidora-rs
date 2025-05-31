@@ -22,19 +22,14 @@ const Inicio = () => {
     navegar("/");
   };
 
-  const iraservicio= () => {
-    navegar("/servicios");
-  };
-
   return (
    
     <Container className="d-flex flex-column align-items-center justify-content-center vh-100">
       <img alt="" src={logo} width="240" height="auto" className="d-inline-block align-top"
-                   
-                    />  
-    <h1 className="titulo text-center">¡Bienvenido, {nombreUsuario}!</h1>
-    <h6 className="subtitulo text-center">Sea bienvenido a nuestra pagina</h6>
-    <p>Desea salir de nuestro sitio</p>
+                                 />  
+    <h1 className="text-dark">¡Bienvenido, {nombreUsuario}!</h1>
+    <h6 className="text-dark">Sea bienvenido a nuestra pagina</h6>
+    <p className="text-dark">Desea salir de nuestro sitio</p>
     <button className="btns" onClick={cerrarSesion}>Cerrar Sesión</button>
   </Container>
   

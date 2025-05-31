@@ -63,7 +63,7 @@ const InicioProductos = ({ productos, cargando, error, abrirModalEdicion, abrirM
                   size="sm"
                   onClick={() => abrirModalEliminacion(producto)}
                 >
-                  <i className="bi bi-trash"></i>
+                  <i className="bi bi-text-dark"></i>
                 </Button>
               </td>
             </tr>

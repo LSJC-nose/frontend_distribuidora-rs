@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Container, Nav, Navbar, Offcanvas,NavDropdown } from "react-bootstrap";
-import logo from "/logo_RS-.png"; // Importación del logo de la ferretería
+import logo from "/Logo_Rivas_Encabezado.png"; // Importación del logo de la ferretería
 import "bootstrap-icons/font/bootstrap-icons.css"; // Importación de íconos de Bootstrap
 import "../../App.css"; // Estilos personalizados de la aplicación
 
@@ -115,7 +115,7 @@ const Encabezado = () => {
                       className="text-black"
                     >
                       {estaColapsado ? <i className="bi-box2-heart-fill me-2"></i> : null}
-                      <strong>Gestión Produtos</strong>
+                      <strong >Gestión Produtos</strong>
                     </NavDropdown.Item>
                   
                     <NavDropdown.Item
@@ -143,7 +143,7 @@ const Encabezado = () => {
                     className={estaColapsado ? "text-black" : "text-white"}
                   >
                     {estaColapsado ? <i className="bi-house-door-fill me-2"></i> : null}
-                    <strong>Ventas</strong>
+                    <strong className="text-  ">Ventas</strong>
                   </Nav.Link>
                   <Nav.Link
                     onClick={() => navegarA("/proveedor")}
@@ -161,7 +161,7 @@ const Encabezado = () => {
                   </Nav.Link>
 
                   <Nav.Link
-                    onClick={() => navegarA("/compras_factura")}
+                    onClick={() => navegarA("/compra_factura")}
                     className={estaColapsado ? "text-black" : "text-white"}
                   >
                     {estaColapsado ? <i className="bi-house-door-fill me-2"></i> : null}

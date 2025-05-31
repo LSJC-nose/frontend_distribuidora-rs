@@ -1,16 +1,14 @@
 
-
 .color-navbar {
- background: -webkit-linear-gradient(90deg, #39f5f4,#32c3bb,#289487,#1c6758,#0d3d30);/* Chrome 10-25, Safari 5.1-6 */   
- background: linear-gradient(90deg, #39f5f4,#32c3bb,#289487,#1c6758,#0d3d30);/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */                                             
-  
+ background-color: #0d7777; /* Código hexadecimal del color */
 }
+
 
 .color-texto-marca {
-  color: #1e3d87 !important;
+  color: #66af66 !important;
 }
 .btns{
-  color: hsl(101, 88%, 23%);
+  color: hsl(180, 88%, 23%);
   width: 200px;
   border-radius: 20px;
 }
@@ -41,18 +39,13 @@
 
 
 
-
-
-
-
 *{
     margin: 0px;
     padding: 0px;
 }
 
 body{
-    font-family: 'Exo', sans-serif;
-    background: lab(48.7% -22.28 -14.25);  
+    background-color: #eff7f7; /* Código hexadecimal del color */
 }
 
 
@@ -70,11 +63,12 @@ body{
     list-style: none;
     width: 20px;
     height: 20px;
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(13, 165, 170, 0.432);
     animation: animate 25s linear infinite;
     bottom: -150px;
     
 }
+
 
 .circles li:nth-child(1){
     left: 25%;

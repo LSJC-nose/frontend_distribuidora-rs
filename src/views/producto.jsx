@@ -10,6 +10,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import { MdAdd } from 'react-icons/md'; // Importa el ícono
 
 const Producto = () => {
   const [listaProducto, setListaProducto] = useState([]);
@@ -306,40 +307,44 @@ const Producto = () => {
   return (
     <>
       <Container className="mt-5">
-        <br />
-        <h4>Productos</h4>
+        <hr></hr>
+        <h4 className='text-dark'>Productos</h4>
         <Row>
           <Col lg={2} md={4} sm={4} xs={5}>
-            <Button variant="primary" onClick={() => setMostrarModal(true)} style={{ width: "100%" }}>
-              Nuevo Producto
+            <Button 
+              className="bi bi-box-seam-fill " 
+              variant="secondary" 
+              onClick={() => setMostrarModal(true)}
+              style={{ width: "100%" }} // Ajusta el margen
+            >
             </Button>
           </Col>
           <Col lg={2} md={4} sm={4} xs={5}>
             <Button
+              className='bi bi-filetype-pdf'
               variant="secondary"
               onClick={generarPDFProductos}
-              style={{ width: "100%" }}
+              style={{ width: "100%" }} // Ajusta el margen
             >
-              Generar reporte PDF
             </Button>
           </Col>
-          <Col lg={2} md={4} sm={4} xs={5}>
+          <Col lg={2} md={4} sm={4} xs={5}> 
             <Button
+              className='bi bi-file-earmark-excel'
               variant="secondary"
               onClick={exportarExcelProductos}
-              style={{ width: "100%" }}
+              style={{ width: "100%" }} // Último botón sin margen derecho
             >
-              Generar Excel
             </Button>
           </Col>
-          <Col lg={6} md={8} sm={8} xs={7}>
-            <CuadroBusquedas
-              textoBusqueda={textoBusqueda}
-              manejarCambioBusqueda={manejarCambioBusqueda}
-            />
-          </Col>
         </Row>
-        <br/><br/>
+        <hr />
+        <Col lg={6} md={8} sm={8} xs={7}>
+          <CuadroBusquedas
+            textoBusqueda={textoBusqueda}
+            manejarCambioBusqueda={manejarCambioBusqueda}
+          />
+        </Col>
 
         <InicioProductos
           productos={productosPaginados}

@@ -208,8 +208,8 @@ const Proveedor = () => {
         <h4>Proveedores</h4>
         <Row>
           <Col lg={2} md={4} sm={4} xs={5}>
-            <Button variant="primary" onClick={() => setMostrarModal(true)} style={{ width: "100%" }}>
-              Nuevo Proveedor
+            <Button className='bi bi-box-seam' variant="secondary" onClick={() => setMostrarModal(true)} style={{ width: "100%" }}>
+
             </Button>
           </Col>
           <Col lg={5} md={8} sm={8} xs={7}>

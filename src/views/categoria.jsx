@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import TablaCategorias from '../components/categoria/InicioCategorias'; // Importa el componente de tabla
 import { Container, Button, Row, Col } from "react-bootstrap";
-import CuadroBusquedas from "../components/busquedas/CuadroBusquedas"
+import CuadroBusquedas from "../components/busquedas/CuadroBusquedas";
 import ModalRegistroCategoria from '../components/categoria/ModalRegistroCategoria';
 import ModalEliminacionCategoria from '../components/categoria/ModalEliminacionCategoria';
 import ModalEdicionCategoria from '../components/categoria/ModalActualizacionCategoria';
@@ -199,8 +199,8 @@ const categoriasPaginadas = categoriasFiltradas.slice(
 
          <Row>
     <Col lg={2} md={4} sm={4} xs={5}>
-      <Button variant="primary" onClick={() => setMostrarModal(true)} style={{ width: "100%" }}>
-        Nueva Categoría
+      <Button className='bi bi-list-ul' variant="primary" onClick={() => setMostrarModal(true)} style={{ width: "100%" }}>
+        
       </Button>
     </Col>
     <Col lg={5} md={8} sm={8} xs={7}>
