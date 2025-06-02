@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import 'bootstrap/dist/css/bootstrap.min.css';
 import Login from "./views/Login";
 import Inicio from "./views/Inicio";
 import Encabezado from "./components/encabezado/Encabezado";
@@ -11,6 +12,7 @@ import Cliente from "./views/cliente";
 import Compras from "./views/compra_factura";
 import Catalogo from "./views/CatalogoProductos";
 import Dashboard from "./views/Dashboard";
+import Estadisticas from "./views/Estadisticas";
 
 const App = () => {
   return (
@@ -28,6 +30,7 @@ const App = () => {
           <Route path="/compra_factura" element={<Compras />} />
           <Route path="/CatalogoProductos" element={<Catalogo />} />
           <Route path="/Dashboard" element={<Dashboard />} />
+          <Route path="/estadisticas" element={<Estadisticas />} />
         </Routes>
       </main>
     </Router>
