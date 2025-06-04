@@ -10,7 +10,6 @@ import ProductosBajoStock from '../components/graficos/ProductosBajoStock';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 const Estadisticas = () => {
-  // Estado
   const [dias, setDias] = useState([]);
   const [totalesPorDia, setTotalesPorDia] = useState([]);
   const [clientes, setClientes] = useState([]);
@@ -19,7 +18,6 @@ const Estadisticas = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Funciones de carga de datos
   const cargaVentas = async () => {
     setLoading(true);
     setError(null);
@@ -45,11 +43,14 @@ const Estadisticas = () => {
     try {
       const response = await fetch('http://localhost:3000/api/comprasPorCliente');
       const data = await response.json();
+      console.log('Datos de comprasPorCliente:', data); // Depuración
       if (!Array.isArray(data)) {
         throw new Error(data.mensaje || 'Datos inválidos recibidos del servidor');
       }
-      setClientes(data.map(item => item.nombre_cliente));
-      setCantidades(data.map(item => item.cantidad_compras));
+      // Combinar nombre y apellido en el frontend
+      setClientes(data.map(item => `${item.nombre} ${item.apellido}`));
+      // Renombrar "compras" a "cantidad_compras" en el mapeo
+      setCantidades(data.map(item => item.compras));
     } catch (error) {
       console.error('Error al cargar compras por cliente:', error);
       setError('Error al cargar compras por cliente: ' + error.message);
@@ -70,7 +71,6 @@ const Estadisticas = () => {
     }
   };
 
-  // Efecto para cargar datos
   useEffect(() => {
     cargaVentas();
     cargaComprasPorCliente();
@@ -78,46 +78,25 @@ const Estadisticas = () => {
     setLoading(false);
   }, []);
 
-  // Datos para el gráfico de ventas
   const chartDataVentas = {
     labels: dias,
-    datasets: [{
-      label: 'Total Ventas por Día',
-      data: totalesPorDia,
-      backgroundColor: 'rgba(75, 192, 192, 0.6)',
-      borderColor: 'rgba(75, 192, 192, 1)',
-      borderWidth: 1,
-    }],
+    datasets: [{ label: 'Total Ventas por Día', data: totalesPorDia, backgroundColor: 'rgba(75, 192, 192, 0.6)', borderColor: 'rgba(75, 192, 192, 1)', borderWidth: 1 }],
   };
 
-  // Datos para el gráfico de compras por cliente
   const chartDataCompras = {
     labels: clientes,
-    datasets: [{
-      label: 'Cantidad de Compras por Cliente',
-      data: cantidades,
-      backgroundColor: 'rgba(255, 99, 132, 0.6)',
-      borderColor: 'rgba(255, 99, 132, 1)',
-      borderWidth: 1,
-    }],
+    datasets: [{ label: 'Cantidad de Compras por Cliente', data: cantidades, backgroundColor: 'rgba(255, 99, 132, 0.6)', borderColor: 'rgba(255, 99, 132, 1)', borderWidth: 1 }],
   };
 
-  // Opciones para los gráficos (opcional)
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
-    scales: {
-      y: {
-        beginAtZero: true,
-      },
-    },
+    scales: { y: { beginAtZero: true } },
   };
 
-  // Renderizado condicional
   if (loading) return <p>Cargando...</p>;
   if (error) return <p>{error}</p>;
 
-  // Renderizado principal
   return (
     <Container className="mt-5">
       <h4>Estadísticas</h4>

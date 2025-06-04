@@ -1,7 +1,7 @@
 import { Card } from "react-bootstrap";
 import { Bar } from 'react-chartjs-2';
 import Chart from 'chart.js/auto';
-import productosBajoStockData from './productosBajoStockData';
+import ProductosBajoStockData from './productosBajoStockData';
 
 const ProductosBajoStock = ({ productos }) => {
   // Actualizar los datos dinámicamente con los productos recibidos
