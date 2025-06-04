@@ -3,3 +3,4 @@ dependecias necesarias
 npm install chart.js react-chartjs-2
 npm install react-bootstrap chart.js react-chartjs-2 jspdf jspdf-autotable
 npm install bootstrap-icons
+npm i react-awesome-reveal

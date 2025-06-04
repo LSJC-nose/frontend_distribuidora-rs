@@ -3,6 +3,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import Tarjeta from '../components/catalogo/Tarjeta';
 import CuadroBusquedas from '../components/busquedas/CuadroBusquedas';
 import Paginacion from '../components/ordenamiento/Paginacion';
+import { Zoom } from "react-awesome-reveal";
 
 const CatalogoProductos = () => {
   const [listaProductos, setListaProductos] = useState([]);

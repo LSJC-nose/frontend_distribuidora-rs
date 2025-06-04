@@ -9,6 +9,48 @@ const ModalRegistroProducto = ({
   agregarProducto,
   errorCarga, 
 }) => {
+
+  const validarLetras = (e) => {
+  const charCode = e.which ? e.which : e.keyCode;
+
+  // Permitir solo letras (A-Z, a-z)
+  if (
+    (charCode < 65 || charCode > 90) && // Letras mayúsculas
+    (charCode < 97 || charCode > 122) && // Letras minúsculas
+    charCode !== 8 && // Retroceso
+    charCode !== 46 && // Borrar
+    charCode !== 9 // Tab
+  ) {
+    e.preventDefault(); // Evita que se escriba el carácter
+  }
+};
+
+const validacionFormulario = () => {
+  return (
+    nuevoCliente.primer_nombre.trim() !== "" &&
+    nuevoCliente.segundo_nombre.trim() !== "" &&
+    nuevoCliente.primer_apellido.trim() !== "" &&
+    nuevoCliente.segundo_apellido.trim() !== "" &&
+    nuevoCliente.celular.trim() !== "" &&
+    nuevoCliente.direccion.trim() !== "" &&
+    nuevoCliente.cedula.trim() !== ""
+  );
+};
+
+const validarNumeros = (e) => {
+  const charCode = e.which ? e.which : e.keyCode;
+  // Permitir solo números (0-9), retroceso, borrar y Tab
+  if (
+    (charCode < 48 || charCode > 57) && // Números (0-9)
+    charCode !== 8 && // Retroceso
+    charCode != 46 && // Borrar
+    charCode !== 9 // Tab
+  ) {
+    e.preventDefault(); // Evita que se escriba el carácter
+  }
+};
+
+
   return (
     <Modal show={mostrarModal} onHide={() => setMostrarModal(false)}>
       <Modal.Header closeButton>

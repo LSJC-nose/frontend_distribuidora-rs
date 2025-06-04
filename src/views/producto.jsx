@@ -304,48 +304,52 @@ const Producto = () => {
     setMostrarModalEliminacion(true);
   };
 
-  return (
-    <>
-      <Container className="mt-5">
-        <hr></hr>
-        <h4 className='text-dark'>Productos</h4>
-        <Row>
-          <Col lg={2} md={4} sm={4} xs={5}>
+return (
+  <>
+    <Container className="mt-5">
+      <hr></hr>
+      <h4 className='text-dark'>Productos</h4>
+      <Row>
+        <Col lg={2} md={4} sm={4} xs={5}>
+          <Zoom triggerOnce duration={600}>
             <Button 
-              className="bi bi-box-seam-fill " 
+              className="bi bi-box-seam-fill" 
               variant="secondary" 
               onClick={() => setMostrarModal(true)}
-              style={{ width: "100%" }} // Ajusta el margen
-            >
-            </Button>
-          </Col>
-          <Col lg={2} md={4} sm={4} xs={5}>
+              style={{ width: "100%" }} 
+            />
+          </Zoom>
+        </Col>
+        <Col lg={2} md={4} sm={4} xs={5}>
+          <Zoom triggerOnce duration={600}>
             <Button
               className='bi bi-filetype-pdf'
               variant="secondary"
               onClick={generarPDFProductos}
-              style={{ width: "100%" }} // Ajusta el margen
-            >
-            </Button>
-          </Col>
-          <Col lg={2} md={4} sm={4} xs={5}> 
+              style={{ width: "100%" }} 
+            />
+          </Zoom>
+        </Col>
+        <Col lg={2} md={4} sm={4} xs={5}> 
+          <Zoom triggerOnce duration={600}>
             <Button
               className='bi bi-file-earmark-excel'
               variant="secondary"
               onClick={exportarExcelProductos}
-              style={{ width: "100%" }} // Último botón sin margen derecho
-            >
-            </Button>
-          </Col>
-        </Row>
-        <hr />
-        <Col lg={6} md={8} sm={8} xs={7}>
-          <CuadroBusquedas
-            textoBusqueda={textoBusqueda}
-            manejarCambioBusqueda={manejarCambioBusqueda}
-          />
+              style={{ width: "100%" }} 
+            />
+          </Zoom>
         </Col>
+      </Row>
+      <hr />
+      <Col lg={6} md={8} sm={8} xs={7}>
+        <CuadroBusquedas
+          textoBusqueda={textoBusqueda}
+          manejarCambioBusqueda={manejarCambioBusqueda}
+        />
+      </Col>
 
+      <Zoom cascade triggerOnce duration={600}>
         <InicioProductos
           productos={productosPaginados}
           cargando={cargando}
@@ -354,40 +358,55 @@ const Producto = () => {
           abrirModalEliminacion={abrirModalEliminacion}
           generarPDFDetalleProducto={generarPDFDetalleProducto}
         />
+      </Zoom>
 
-        <ModalRegistroProducto
-          mostrarModal={mostrarModal}
-          setMostrarModal={setMostrarModal}
-          nuevoProducto={nuevoProducto}
-          manejarCambioInput={manejarCambioInput}
-          agregarProducto={agregarProducto}
-          errorCarga={errorCarga}
-        />
+      <ModalRegistroProducto
+        mostrarModal={mostrarModal}
+        setMostrarModal={setMostrarModal}
+        nuevoProducto={nuevoProducto}
+        manejarCambioInput={manejarCambioInput}
+        agregarProducto={agregarProducto}
+        errorCarga={errorCarga}
+      />
 
-        <ModalEdicionProducto
-          mostrarModalEdicion={mostrarModalEdicion}
-          setMostrarModalEdicion={setMostrarModalEdicion}
-          productoEditado={productoEditado}
-          manejarCambioInputEdicion={manejarCambioInputEdicion}
-          actualizarProducto={actualizarProducto}
-          errorCarga={errorCarga}
-        />
+      <ModalEdicionProducto
+        mostrarModalEdicion={mostrarModalEdicion}
+        setMostrarModalEdicion={setMostrarModalEdicion}
+        productoEditado={productoEditado}
+        manejarCambioInputEdicion={manejarCambioInputEdicion}
+        actualizarProducto={actualizarProducto}
+        errorCarga={errorCarga}
+      />
 
-        <ModalEliminacionProducto
-          mostrarModalEliminacion={mostrarModalEliminacion}
-          setMostrarModalEliminacion={setMostrarModalEliminacion}
-          eliminarProducto={eliminarProducto}
-        />
+      <ModalEliminacionProducto
+        mostrarModalEliminacion={mostrarModalEliminacion}
+        setMostrarModalEliminacion={setMostrarModalEliminacion}
+        eliminarProducto={eliminarProducto}
+      />
 
-        <Paginacion
-          elementosPorPagina={elementosPorPagina}
-          totalElementos={productosFiltrados.length}
-          paginaActual={paginaActual}
-          establecerPaginaActual={establecerPaginaActual}
+      <Paginacion
+        elementosPorPagina={elementosPorPagina}
+        totalElementos={productosFiltrados.length}
+        paginaActual={paginaActual}
+        establecerPaginaActual={establecerPaginaActual}
+      />
+
+      <Form.Group className="mb-3" controlId="formPrimerNombre">
+        <Form.Label>Primer nombre</Form.Label>
+        <Form.Control
+          type="text"
+          name="primer_nombre"
+          value={nuevoCliente.primer_nombre}
+          onChange={manejarCambioInput}
+          onKeyDown={validarLetras}
+          placeholder="Ingrese el primer nombre"
+          maxLength={20}
+          required
         />
-      </Container>
-    </>
-  );
+      </Form.Group>
+    </Container>
+  </>
+);
 };
 
 export default Producto;
