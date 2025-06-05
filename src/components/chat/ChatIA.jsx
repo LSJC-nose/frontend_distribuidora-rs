@@ -17,7 +17,7 @@ const ChatIA = ({ mostrarChatModal, setMostrarChatModal }) => {
       - Dim_Tiempo (fecha_venta, año, mes, dia, Trimestre, nombre_mes, dia_semana) 
       - Dim_Cliente (ID_Cliente, Nombre, Apellido, ID_tipoCliente) 
       - Dim_Producto (ID_Producto, Stock, ID_Categoria, PrecioCompra, PrecioVenta, nombreProducto, Descripcion) 
-      - Hecho_Venta (NumeroFactura, ID_Detalle, ID_Cliente, ID_Producto, fecha_venta, Cantidad, PrecioVenta, total_veta) 
+      - Hecho_Venta (NumeroFactura, ID_Detalle, ID_Cliente, ID_Producto, fecha_venta, Cantidad, PrecioVenta, total_venta) 
       Relaciones: 
       - Hecho_Venta.ID_Cliente -> Dim_Cliente.ID_Cliente 
       - Hecho_Venta.ID_Producto -> Dim_Producto.ID_Producto 
