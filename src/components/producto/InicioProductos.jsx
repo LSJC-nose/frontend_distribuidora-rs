@@ -8,12 +8,13 @@ const InicioProductos = ({ productos, cargando, error, abrirModalEdicion, abrirM
 
   return (
     <>
-      <Table striped bordered hover>
+      <Table  className="bi bi-secondary table-striped table-primary">
         <thead>
           <tr>
             <th>ID</th>
             <th>Nombre</th>
             <th>Stock</th>
+            <th>Categoria</th>
             <th>Precio Compra</th>
             <th>Precio Venta</th>
             <th>Descripción</th>
@@ -27,6 +28,7 @@ const InicioProductos = ({ productos, cargando, error, abrirModalEdicion, abrirM
               <td>{producto.ID_Producto}</td>
               <td>{producto.nombreProducto}</td>
               <td>{producto.Stock}</td>
+              <td>{producto.NombreCategoria}</td>
               <td>{producto.PrecioCompra}</td>
               <td>{producto.PrecioVenta}</td>
               <td>{producto.Descripcion}</td>

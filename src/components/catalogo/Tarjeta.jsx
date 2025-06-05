@@ -17,7 +17,8 @@ const Tarjeta = ({ indice,
   return (
     <>
     <Col lg={3} className="mt-3">
-      <Card border=""
+      <Card border="" 
+
       className="animate__animated animate__backInDown" >
         <Card.Img
           variant="top"

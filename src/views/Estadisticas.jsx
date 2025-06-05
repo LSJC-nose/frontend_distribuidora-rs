@@ -1,13 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
-import { Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { Container, Row, Col, Button, Alert } from 'react-bootstrap';
 import ResumenVentasDiarias from '../components/graficos/ResumenVentasDiarias';
 import ComprasPorCliente from '../components/graficos/ComprasPorCliente';
 import ProductosBajoStock from '../components/graficos/ProductosBajoStock';
-
-// Registrar los componentes necesarios de Chart.js
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+import ChatIA from '../components/chat/ChatIA';
 
 const Estadisticas = () => {
   const [dias, setDias] = useState([]);
@@ -15,102 +11,108 @@ const Estadisticas = () => {
   const [clientes, setClientes] = useState([]);
   const [cantidades, setCantidades] = useState([]);
   const [productosBajoStock, setProductosBajoStock] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const cargaVentas = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch('http://localhost:3000/api/resumenVentasDiarias');
-      const data = await response.json();
-      if (!Array.isArray(data)) {
-        throw new Error(data.mensaje || 'Datos inválidos recibidos del servidor');
-      }
-      const fechasFormateadas = data.map(item => {
-        const fecha = new Date(item.dia);
-        return `${fecha.getDate().toString().padStart(2, '0')}-${(fecha.getMonth() + 1).toString().padStart(2, '0')}`;
-      });
-      setDias(fechasFormateadas);
-      setTotalesPorDia(data.map(item => item.total_ventas));
-    } catch (error) {
-      console.error('Error al cargar ventas:', error);
-      setError('Error al cargar ventas: ' + error.message);
-    }
-  };
-
-  const cargaComprasPorCliente = async () => {
-    try {
-      const response = await fetch('http://localhost:3000/api/comprasPorCliente');
-      const data = await response.json();
-      console.log('Datos de comprasPorCliente:', data); // Depuración
-      if (!Array.isArray(data)) {
-        throw new Error(data.mensaje || 'Datos inválidos recibidos del servidor');
-      }
-      // Combinar nombre y apellido en el frontend
-      setClientes(data.map(item => `${item.nombre} ${item.apellido}`));
-      // Renombrar "compras" a "cantidad_compras" en el mapeo
-      setCantidades(data.map(item => item.compras));
-    } catch (error) {
-      console.error('Error al cargar compras por cliente:', error);
-      setError('Error al cargar compras por cliente: ' + error.message);
-    }
-  };
-
-  const cargaProductosBajoStock = async () => {
-    try {
-      const response = await fetch('http://localhost:3000/api/productosBajoStock');
-      const data = await response.json();
-      if (!Array.isArray(data)) {
-        throw new Error(data.mensaje || 'Datos inválidos recibidos del servidor');
-      }
-      setProductosBajoStock(data);
-    } catch (error) {
-      console.error('Error al cargar productos con bajo stock:', error);
-      setError('Error al cargar productos con bajo stock: ' + error.message);
-    }
-  };
+  const [mostrarChatModal, setMostrarChatModal] = useState(false);
 
   useEffect(() => {
-    cargaVentas();
-    cargaComprasPorCliente();
-    cargaProductosBajoStock();
-    setLoading(false);
+    cargarVentasDiarias();
+    cargarComprasPorCliente();
+    cargarProductosBajoStock();
   }, []);
 
-  const chartDataVentas = {
-    labels: dias,
-    datasets: [{ label: 'Total Ventas por Día', data: totalesPorDia, backgroundColor: 'rgba(75, 192, 192, 0.6)', borderColor: 'rgba(75, 192, 192, 1)', borderWidth: 1 }],
+  const cargarVentasDiarias = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/resumenVentasDiarias');
+      if (!response.ok) throw new Error(`Error HTTP (Ventas Diarias): ${response.status}`);
+      const data = await response.json();
+      const array = Array.isArray(data.data) ? data.data : Array.isArray(data) ? data : [];
+      if (!array.length) {
+        setDias([]);
+        setTotalesPorDia([]);
+        setError('No hay datos de ventas diarias disponibles');
+      } else {
+        const valid = array.every(item => item.dia && item.total_ventas != null);
+        if (!valid) throw new Error('Estructura inesperada en ventas diarias');
+        const fechas = array.map(item => {
+          const fecha = new Date(item.dia);
+          return `${fecha.getDate().toString().padStart(2, '0')}-${(fecha.getMonth() + 1).toString().padStart(2, '0')}`;
+        });
+        setDias(fechas);
+        setTotalesPorDia(array.map(item => Number(item.total_ventas) || 0));
+      }
+    } catch (err) {
+      console.error(err);
+      setError(prev => prev ? `${prev}; ${err.message}` : err.message);
+      setDias([]);
+      setTotalesPorDia([]);
+    }
   };
 
-  const chartDataCompras = {
-    labels: clientes,
-    datasets: [{ label: 'Cantidad de Compras por Cliente', data: cantidades, backgroundColor: 'rgba(255, 99, 132, 0.6)', borderColor: 'rgba(255, 99, 132, 1)', borderWidth: 1 }],
+  const cargarComprasPorCliente = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/comprasPorCliente');
+      if (!response.ok) throw new Error(`Error HTTP (Compras por Cliente): ${response.status}`);
+      const data = await response.json();
+      const array = Array.isArray(data.data) ? data.data : Array.isArray(data) ? data : [];
+      if (!array.length) {
+        setClientes([]);
+        setCantidades([]);
+        setError(prev => prev ? `${prev}; No hay datos de compras por cliente` : 'No hay datos de compras por cliente');
+      } else {
+        const valid = array.every(item => item.nombre && item.apellido && item.compras != null);
+        if (!valid) throw new Error('Estructura inesperada en compras por cliente');
+        setClientes(array.map(item => `${item.nombre} ${item.apellido}`));
+        setCantidades(array.map(item => Number(item.compras) || 0));
+      }
+    } catch (err) {
+      console.error(err);
+      setError(prev => prev ? `${prev}; ${err.message}` : err.message);
+      setClientes([]);
+      setCantidades([]);
+    }
   };
 
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    scales: { y: { beginAtZero: true } },
+  const cargarProductosBajoStock = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/productosBajoStock');
+      if (!response.ok) throw new Error(`Error HTTP (Productos Bajo Stock): ${response.status}`);
+      const data = await response.json();
+      const array = Array.isArray(data.data) ? data.data : Array.isArray(data) ? data : [];
+      if (!array.length) {
+        setProductosBajoStock([]);
+        setError(prev => prev ? `${prev}; No hay productos con bajo stock` : 'No hay productos con bajo stock');
+      } else {
+        setProductosBajoStock(array);
+      }
+    } catch (err) {
+      console.error(err);
+      setError(prev => prev ? `${prev}; ${err.message}` : err.message);
+      setProductosBajoStock([]);
+    }
   };
-
-  if (loading) return <p>Cargando...</p>;
-  if (error) return <p>{error}</p>;
 
   return (
     <Container className="mt-5">
       <h4>Estadísticas</h4>
+      <Button variant="primary" onClick={() => setMostrarChatModal(true)}>
+        Consultar con IA
+      </Button>
+      {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
       <Row className="mt-4">
-        <Col xs={12} sm={12} md={12} lg={6} className="mb-4">
+        <Col xs={12} md={6} className="mb-4">
           <ResumenVentasDiarias dias={dias} totales_por_dia={totalesPorDia} />
         </Col>
-        <Col xs={12} sm={12} md={12} lg={6} className="mb-4">
+        <Col xs={12} md={6} className="mb-4">
           <ComprasPorCliente clientes={clientes} cantidades={cantidades} />
         </Col>
-        <Col xs={12} sm={12} md={12} lg={12} className="mb-4">
+        <Col xs={12} className="mb-4">
           <ProductosBajoStock productos={productosBajoStock} />
         </Col>
       </Row>
+      <ChatIA
+        mostrarChatModal={mostrarChatModal}
+        setMostrarChatModal={setMostrarChatModal}
+      />
     </Container>
   );
 };

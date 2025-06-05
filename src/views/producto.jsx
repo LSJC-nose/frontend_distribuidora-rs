@@ -366,6 +366,7 @@ return (
         manejarCambioInput={manejarCambioInput}
         agregarProducto={agregarProducto}
         errorCarga={errorCarga}
+        categorias={listaProducto} // Asumiendo que las categorías están en la lista de productos
       />
 
       <ModalEdicionProducto

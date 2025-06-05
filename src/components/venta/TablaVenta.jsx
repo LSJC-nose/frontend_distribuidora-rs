@@ -23,7 +23,7 @@ const TablaVentas = ({ obtenerDetalles, ventas, cargando, error,
   // Renderizado de la tabla con los datos recibidos
   return (
     <>
-    <Table striped bordered hover responsive>
+    <Table className="bi bi-secondary table-striped table-primary">
       <thead>
         <tr>
           <th>ID Venta</th>

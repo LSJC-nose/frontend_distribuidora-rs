@@ -8,6 +8,7 @@ const ModalRegistroProducto = ({
   manejarCambioInput,
   agregarProducto,
   errorCarga, 
+  categorias
 }) => {
 
   const validarLetras = (e) => {
@@ -118,17 +119,22 @@ const validarNumeros = (e) => {
             />
           </Form.Group>
 
-          <Form.Group className="mb-3" controlId="formIDCategoria">
-            <Form.Label>ID de Categoría</Form.Label>
-            <Form.Control
-              type="number"
-              name="ID_Categoria"
-              value={nuevoProducto.ID_Categoria}
-              onChange={manejarCambioInput}
-              placeholder="Ingresa el ID de categoría"
-              required
-            />
-          </Form.Group>
+        <Form.Group className="mb-3" controlId="formCliente_tipoCliente">
+                    <Form.Label>Categoria</Form.Label>
+                    <Form.Select
+                      name="ID_Categoria"
+                      value={nuevoProducto.ID_Categoria}
+                      onChange={manejarCambioInput}
+                      required
+                    >
+                      <option value="">Selecciona la categoría</option>
+                      {categorias.map((categoria) => (
+                        <option key={categoria.ID_Categoria} value={categoria.ID_Categoria}>
+                          {categoria.NombreCategoria}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
 
          <Form.Group className="mb-3" controlId="formImagenProducto">
   <Form.Label>Imagen</Form.Label>

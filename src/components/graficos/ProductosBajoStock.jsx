@@ -15,7 +15,7 @@ const ProductosBajoStock = ({ productos }) => {
       {
         label: 'Stock',
         data: productos.map((producto) => producto.Stock || 0),
-        backgroundColor: 'rgba(0, 42, 231, 0.6)',
+        backgroundColor: 'rgba(231, 216, 0, 0.6)',
         borderColor: 'rgba(255, 192, 203, 1)',
         borderWidth: 1,
       },

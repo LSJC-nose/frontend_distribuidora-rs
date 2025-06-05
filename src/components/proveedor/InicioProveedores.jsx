@@ -13,7 +13,7 @@ const InicioProveedores = ({
 
   return (
     <>
-      <Table striped bordered hover>
+      <Table className="bi bi-secondary table-striped table-primary">
         <thead>
           <tr>
             <th>ID</th>

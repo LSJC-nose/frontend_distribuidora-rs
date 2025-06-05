@@ -61,6 +61,7 @@ const ModalRegistroCliente = ({
               ))}
             </Form.Select>
           </Form.Group>
+          
           </Form.Group>
           {errorCarga && (
             <div className="text-danger mt-2">{errorCarga}</div>
