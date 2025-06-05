@@ -16,7 +16,7 @@ const Compras = () => {
   const [detallesCompra, setDetallesCompra] = useState([]);
   const [cargandoDetalles, setCargandoDetalles] = useState(false);
   const [errorDetalles, setErrorDetalles] = useState(null);
-   const [comprasFiltradas, setComprasFiltradas] = useState([]);
+   const [ventasFiltradas, setVentasFiltradas] = useState([]);
    const [paginaActual, establecerPaginaActual] = useState(1);
    const elementosPorPagina = 5; // Número de elementos por página
      const [textoBusqueda, setTextoBusqueda] = useState("");

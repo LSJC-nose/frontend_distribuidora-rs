@@ -6,6 +6,7 @@ import ModalDetallesVenta from '../components/detalles_ventas/ModalDetallesVenta
 import ModalEliminacionVenta from '../components/venta/EliminacionModalVenta';
 import ModalRegistroVenta from '../components/venta/ModalRegistroVenta';
 import ModalActualizacionVenta from '../components/venta/ModalActualizacionVenta';
+import CuadroBusquedas from "../components/busquedas/CuadroBusquedas";
 
 // Declaración del componente Ventas
 const Ventas = () => {
@@ -21,7 +22,7 @@ const Ventas = () => {
   const [clientes, setClientes] = useState([]);
   const [productos, setProductos] = useState([]);
   const [nuevaVenta, setNuevaVenta] = useState({
-   id_cliente: '',
+      ID_Cliente: '', 
     fecha_venta: new Date(),
     total_venta: 0
   });
@@ -31,8 +32,11 @@ const Ventas = () => {
   const [detallesEditados, setDetallesEditados] = useState([]);
   const [mostrarModalEliminacion, setMostrarModalEliminacion] = useState(false);
   const [ventaAEliminar, setVentaAEliminar] = useState(null);
-  
-  
+  const [ventasFiltradas, setVentasFiltradas] = useState([]);
+  const [paginaActual, establecerPaginaActual] = useState(1);
+  const elementosPorPagina = 5; // Número de elementos por página
+  const [textoBusqueda, setTextoBusqueda] = useState("");
+
   // Lógica de obtención de datos con useEffect
   useEffect(() => {
 
@@ -48,7 +52,8 @@ const Ventas = () => {
           throw new Error('Error al cargar las ventas');
         }
         const datos = await respuesta.json();
-        setListaVentas(datos);    // Actualiza el estado con los datos
+        setListaVentas(datos);
+        setVentasFiltradas(datos);    // Actualiza el estado con los datos
         setCargando(false);       // Indica que la carga terminó
       } catch (error) {
         setErrorCarga(error.message); // Guarda el mensaje de error
@@ -111,17 +116,19 @@ const Ventas = () => {
     }));
   };
 
+
+
   const agregarVenta = async () => {
-    if (!nuevaVenta.id_cliente || !nuevaVenta.fecha_venta || detallesNuevos.length === 0) {
+    if (!nuevaVenta.ID_Cliente || !nuevaVenta.fecha_venta || detallesNuevos.length === 0) {
       setErrorCarga("Por favor, completa todos los campos y agrega al menos un detalle.");
       return;
     }
 
     try {
-      const ventaData = {   
-        id_cliente: nuevaVenta.id_cliente,
+      const ventaData = {
+        ID_Cliente: nuevaVenta.ID_Cliente,
         fecha_venta: nuevaVenta.fecha_venta.toISOString(),
-        total_venta: detallesNuevos.reduce((sum, d) => sum + (d.cantidad * d.precio_unitario), 0),
+        total_venta: detallesNuevos.reduce((sum, d) => sum + (d.Cantidad * d.PrecioVenta), 0),
         detalles: detallesNuevos
       };
 
@@ -134,7 +141,7 @@ const Ventas = () => {
       if (!respuesta.ok) throw new Error('Error al registrar la venta');
 
       await obtenerVentas();
-      setNuevaVenta({ id_cliente: '', fecha_venta: new Date(), total_venta: 0 });
+      setNuevaVenta({ ID_Cliente: '', fecha_venta: new Date(), total_venta: 0 });
       setDetallesNuevos([]);
       setMostrarModalRegistro(false);
       setErrorCarga(null);
@@ -142,6 +149,8 @@ const Ventas = () => {
       setErrorCarga(error.message);
     }
   };
+
+  // Funciones para obtener clientes y productos
 
   const obtenerClientes = async () => {
     try {
@@ -174,8 +183,8 @@ const Ventas = () => {
 
     
     const datoscompletos = {
-      NumeroFactura: datosventa.id_venta,
-      id_cliente: datosventa.id_cliente,
+      NumeroFactura: datosventa.NumeroFactura,
+      ID_Cliente: datosventa.ID_Cliente,
       fecha_venta: datosventa.fecha_venta,
       total_venta: datosventa.total_venta,
       Nombre: venta.Nombre,
@@ -184,7 +193,7 @@ const Ventas = () => {
     
     setVentaAEditar(datoscompletos);
 
-    const respuesta = await fetch(`http://localhost:3000/api/obtenerdetallesventa/${venta.id_venta}`);
+    const respuesta = await fetch(`http://localhost:3000/api/obtenerdetallesventa/${venta.NumeroFactura}`);
     if (!respuesta.ok) throw new Error('Error al cargar los detalles de la venta');
     const datos = await respuesta.json();
     setDetallesEditados(datos);
@@ -205,15 +214,14 @@ const actualizarVenta = async (ventaActualizada, detalles) => {
   }
   try {      
     const ventaData = {
-      id_venta: ventaActualizada.id_venta,
-      id_cliente: ventaActualizada.id_cliente,
-      id_empleado: ventaActualizada.id_empleado,
+      NumeroFactura: ventaActualizada.NumeroFactura,
+      ID_Cliente: ventaActualizada.ID_Cliente,
       fecha_venta: ventaActualizada.fecha_venta.toLocaleString('en-CA', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).replace(',', ' '),
-      total_venta: detalles.reduce((sum, d) => sum + (d.cantidad * d.precio_unitario), 0),
+      total_venta: detalles.reduce((sum, d) => sum + (d.Cantidad * d.PrecioVenta), 0),
       detalles
     };
-    console.log(`Enviando ID venta: ${ventaActualizada.id_venta}`, JSON.stringify(ventaData));
-    const respuesta = await fetch(`http://localhost:3000/api/actualizarventa/${ventaActualizada.id_venta}`, {
+    console.log(`Enviando ID venta: ${ventaActualizada.NumeroFactura}`, JSON.stringify(ventaData));
+    const respuesta = await fetch(`http://localhost:3000/api/actualizarventa/${ventaActualizada.NumeroFactura}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(ventaData)
@@ -229,6 +237,25 @@ const actualizarVenta = async (ventaActualizada, detalles) => {
   }
 };
 
+const manejarCambioBusqueda = (e) => {
+    establecerPaginaActual(1); // Reiniciar a página 1
+    const texto = e.target.value.toLowerCase();
+    setTextoBusqueda(texto);
+    
+    const filtradas = listaVentas.filter(
+      (ventas) =>
+        ventas.nombre_cliente.toLowerCase().includes(texto)
+    );
+    setVentasFiltradas(filtradas);
+  };
+
+
+      // Calcular elementos paginados
+const ventasPaginadas = ventasFiltradas.slice(
+  (paginaActual - 1) * elementosPorPagina,
+  paginaActual * elementosPorPagina
+);
+
 
   // Renderizado de la vista
   return (
@@ -237,22 +264,33 @@ const actualizarVenta = async (ventaActualizada, detalles) => {
       <Container className="mt-5" >
   <p>d</p>
         <Row>
-          <Col lg={2} md={4} sm={4} xs={5}>
-            <Button className='bi bi-cart4' variant="secondary" onClick={() => setMostrarModalRegistro(true)} style={{ width: "100%" }}>
-             
-            </Button>
-          </Col>
-        </Row>
+    <Col lg={2} md={4} sm={4} xs={5}>
+      <Button className='bi bi-bag-plus-fill' variant="secondary" onClick={() =>
+         setMostrarModalRegistro(true)} style={{ width: "50%",fontSize: "18px", margin: 0}}>
+      </Button>
+    </Col>
+    <Col lg={5} md={8} sm={8} xs={7}>
+      <CuadroBusquedas
+        textoBusqueda={textoBusqueda}
+        manejarCambioBusqueda={manejarCambioBusqueda}
+      />
+    </Col>
+  </Row>  
+      <br />
         <br />
 
         {/* Pasa los estados como props al componente TablaVentas */}
         <TablaVentas
-          ventas={listaVentas}
+          ventas={ventasPaginadas}
+          totalElementos={listaVentas.length} // Total de elementos
           cargando={cargando}
           error={errorCarga}
           obtenerDetalles={obtenerDetalles} // Pasar la función
           abrirModalEliminacion={abrirModalEliminacion}
           abrirModalActualizacion={abrirModalActualizacion}
+          elementosPorPagina={elementosPorPagina} // Elementos por página
+          paginaActual={paginaActual} // Página actual
+          establecerPaginaActual={establecerPaginaActual} // Método para cambiar página
         />
 
         <ModalDetallesVenta

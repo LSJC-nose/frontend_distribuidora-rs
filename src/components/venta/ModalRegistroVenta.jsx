@@ -19,10 +19,10 @@ const ModalRegistroVenta = ({
 }) => {
   const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
   const [productoSeleccionado, setProductoSeleccionado] = useState(null);
-  const [nuevoDetalle, setNuevoDetalle] = useState({ id_producto: '', cantidad: '', precio_unitario: '' });
+  const [nuevoDetalle, setNuevoDetalle] = useState({ ID_Producto: '', Cantidad: '', PrecioVenta: '' });
 
   // Calcular total de la venta
-  const totalVenta = detallesVenta.reduce((sum, detalle) => sum + (detalle.cantidad * detalle.precio_unitario), 0);
+  const totalVenta = detallesVenta.reduce((sum, detalle) => sum + (detalle.Cantidad * detalle.PrecioVenta), 0);
 
   // Cargar opciones para AsyncSelect
   const cargarClientes = (inputValue, callback) => {
@@ -49,15 +49,15 @@ const ModalRegistroVenta = ({
   // Manejar cambios en los selectores
   const manejarCambioCliente = (seleccionado) => {
     setClienteSeleccionado(seleccionado);
-    setNuevaVenta(prev => ({ ...prev, id_cliente: seleccionado ? seleccionado.value : '' }));
+    setNuevaVenta(prev => ({ ...prev, ID_Cliente: seleccionado ? seleccionado.value : '' }));
   };
 
   const manejarCambioProducto = (seleccionado) => {
     setProductoSeleccionado(seleccionado);
     setNuevoDetalle(prev => ({
       ...prev,
-      id_producto: seleccionado ? seleccionado.value : '',
-      precio_unitario: seleccionado ? seleccionado.precio : ''
+      ID_Producto: seleccionado ? seleccionado.value : '',
+      PrecioVenta: seleccionado ? seleccionado.precio : ''
     }));
   };
 
@@ -69,25 +69,25 @@ const ModalRegistroVenta = ({
 
   // Agregar detalle a la lista
   const manejarAgregarDetalle = () => {
-    if (!nuevoDetalle.id_producto || !nuevoDetalle.cantidad || nuevoDetalle.cantidad <= 0) {
+    if (!nuevoDetalle.ID_Producto || !nuevoDetalle.Cantidad || nuevoDetalle.Cantidad <= 0) {
       alert("Por favor, selecciona un producto y una cantidad válida.");
       return;
     }
 
     // Verificar stock
-    const producto = productos.find(p => p.ID_Producto === nuevoDetalle.id_producto);
-    if (producto && nuevoDetalle.cantidad > producto.Stock) {
+    const producto = productos.find(p => p.ID_Producto === nuevoDetalle.ID_Producto);
+    if (producto && nuevoDetalle.Cantidad > producto.Stock) {
       alert(`Stock insuficiente de ${producto.nombreProducto}. Unidades disponibles: ${producto.Stock}`);
       return;
     }
 
     agregarDetalle({
-      id_producto: nuevoDetalle.id_producto,
-      nombre_producto: productoSeleccionado.label,
-      cantidad: parseInt(nuevoDetalle.cantidad),
-      precio_unitario: parseFloat(nuevoDetalle.precio_unitario)
+        ID_Producto: nuevoDetalle.ID_Producto ,
+      nombreProducto: productoSeleccionado.label,
+      Cantidad: parseInt(nuevoDetalle.Cantidad),
+      PrecioVenta: parseFloat(nuevoDetalle.PrecioVenta)
     });
-    setNuevoDetalle({ id_producto: '', cantidad: '', precio_unitario: '' });
+    setNuevoDetalle({ ID_Producto: '', Cantidad: '', PrecioVenta: '' });
     setProductoSeleccionado(null);
   };
 
@@ -157,8 +157,8 @@ const ModalRegistroVenta = ({
                 <Form.Label>Cantidad</Form.Label>
                 <FormControl
                   type="number"
-                  name="cantidad"
-                  value={nuevoDetalle.cantidad}
+                  name="Cantidad"
+                  value={nuevoDetalle.Cantidad}
                   onChange={manejarCambioDetalle}
                   placeholder="Cantidad"
                   min="1"
@@ -171,8 +171,8 @@ const ModalRegistroVenta = ({
                 <Form.Label>Precio Unitario</Form.Label>
                 <FormControl
                   type="number"
-                  name="precio_unitario"
-                  value={nuevoDetalle.precio_unitario}
+                  name="PrecioVenta"
+                  value={nuevoDetalle.PrecioVenta}
                   disabled
                   placeholder="Automático"
                 />
@@ -201,10 +201,10 @@ const ModalRegistroVenta = ({
                 <tbody>
                   {detallesVenta.map((detalle, index) => (
                     <tr key={index}>
-                      <td>{detalle.nombre_producto}</td>
-                      <td>{detalle.cantidad}</td>
-                      <td>{detalle.precio_unitario.toFixed(2)}</td>
-                      <td>{(detalle.cantidad * detalle.precio_unitario).toFixed(2)}</td>
+                      <td>{detalle.nombreProducto}</td>
+                      <td>{detalle.Cantidad}</td>
+                      <td>{detalle.PrecioVenta.toFixed(2)}</td>
+                      <td>{(detalle.Cantidad * detalle.PrecioVenta).toFixed(2)}</td>
                     </tr>
                   ))}
                 </tbody>

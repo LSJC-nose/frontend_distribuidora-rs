@@ -311,34 +311,34 @@ return (
       <h4 className='text-dark'>Productos</h4>
       <Row>
         <Col lg={2} md={4} sm={4} xs={5}>
-          <Zoom triggerOnce duration={600}>
+         
             <Button 
               className="bi bi-box-seam-fill" 
               variant="secondary" 
               onClick={() => setMostrarModal(true)}
               style={{ width: "100%" }} 
             />
-          </Zoom>
+          
         </Col>
         <Col lg={2} md={4} sm={4} xs={5}>
-          <Zoom triggerOnce duration={600}>
+         
             <Button
               className='bi bi-filetype-pdf'
               variant="secondary"
               onClick={generarPDFProductos}
               style={{ width: "100%" }} 
             />
-          </Zoom>
+         
         </Col>
         <Col lg={2} md={4} sm={4} xs={5}> 
-          <Zoom triggerOnce duration={600}>
+          
             <Button
               className='bi bi-file-earmark-excel'
               variant="secondary"
               onClick={exportarExcelProductos}
               style={{ width: "100%" }} 
             />
-          </Zoom>
+        
         </Col>
       </Row>
       <hr />
@@ -349,7 +349,7 @@ return (
         />
       </Col>
 
-      <Zoom cascade triggerOnce duration={600}>
+   
         <InicioProductos
           productos={productosPaginados}
           cargando={cargando}
@@ -358,8 +358,7 @@ return (
           abrirModalEliminacion={abrirModalEliminacion}
           generarPDFDetalleProducto={generarPDFDetalleProducto}
         />
-      </Zoom>
-
+  
       <ModalRegistroProducto
         mostrarModal={mostrarModal}
         setMostrarModal={setMostrarModal}
@@ -391,19 +390,7 @@ return (
         establecerPaginaActual={establecerPaginaActual}
       />
 
-      <Form.Group className="mb-3" controlId="formPrimerNombre">
-        <Form.Label>Primer nombre</Form.Label>
-        <Form.Control
-          type="text"
-          name="primer_nombre"
-          value={nuevoCliente.primer_nombre}
-          onChange={manejarCambioInput}
-          onKeyDown={validarLetras}
-          placeholder="Ingrese el primer nombre"
-          maxLength={20}
-          required
-        />
-      </Form.Group>
+     
     </Container>
   </>
 );
