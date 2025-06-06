@@ -8,6 +8,7 @@ const ModalEdicionProducto = ({
   manejarCambioInputEdicion,
   actualizarProducto,
   errorCarga,
+  listaCategorias
 }) => {
   return (
     <Modal show={mostrarModalEdicion} onHide={() => setMostrarModalEdicion(false)}>
@@ -25,16 +26,36 @@ const ModalEdicionProducto = ({
               onChange={manejarCambioInputEdicion}
               required
             />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formStock">
-            <Form.Label>Stock</Form.Label>
-            <Form.Control
-              type="number"
-              name="Stock"
-              value={productoEditado?.Stock || ""}
-              onChange={manejarCambioInputEdicion}
-              required
-            />
+         
+         <Form.Group className="mb-3" controlId="formStock">
+  <Form.Label>Stock</Form.Label>
+  <Form.Control
+    type="number"
+    name="Stock"
+    value={productoEditado?.Stock || ""}
+    onChange={manejarCambioInputEdicion}
+    required
+  />
+</Form.Group>
+
+<Form.Group className="mb-3" controlId="formCategoriaProducto">
+  <Form.Label>Categoría</Form.Label>
+  <Form.Select
+    name="ID_Categoria"
+    value={productoEditado?.ID_Categoria || ""}
+    onChange={manejarCambioInputEdicion}
+    required
+  >
+    <option value="">Selecciona una categoría</option>
+    {listaCategorias.map((categoria) => (
+      <option key={categoria.ID_Categoria} value={categoria.ID_Categoria}>
+        {categoria.NombreCategoria}
+      </option>
+    ))}
+  </Form.Select>
+</Form.Group>
+
+
           </Form.Group>
           <Form.Group className="mb-3" controlId="formPrecioCompra">
             <Form.Label>Precio de Compra</Form.Label>
@@ -68,7 +89,7 @@ const ModalEdicionProducto = ({
               required
             />
           </Form.Group>
-
+              
 
          <Form.Group className="mb-3" controlId="formImagenProducto">
   <Form.Label>Imagen</Form.Label>

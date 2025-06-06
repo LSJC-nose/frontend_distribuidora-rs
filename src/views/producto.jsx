@@ -14,6 +14,7 @@ import { MdAdd } from 'react-icons/md'; // Importa el ícono
 
 const Producto = () => {
   const [listaProducto, setListaProducto] = useState([]);
+  const [listaCategorias, setListaCategorias] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [errorCarga, setErrorCarga] = useState(null);
   const [mostrarModal, setMostrarModal] = useState(false);
@@ -37,6 +38,7 @@ const Producto = () => {
 
   useEffect(() => {
     obtenerProducto();
+    obtenerCategorias();
   }, []);
 
   const obtenerProducto = async () => {
@@ -191,6 +193,7 @@ const Producto = () => {
     paginaActual * elementosPorPagina
   );
 
+
   const agregarProducto = async () => {
     if (!nuevoProducto.nombreProducto || !nuevoProducto.Descripcion || !nuevoProducto.PrecioCompra || !nuevoProducto.PrecioVenta || !nuevoProducto.Stock || !nuevoProducto.ID_Categoria ) {
       setErrorCarga("Por favor, completa todos los campos antes de guardar.");
@@ -244,19 +247,30 @@ const Producto = () => {
   };
 
   const actualizarProducto = async () => {
-    if (!productoEditado?.nombreProducto || !productoEditado?.Descripcion 
-      || !productoEditado?.PrecioCompra || !productoEditado?.PrecioVenta || !productoEditado?.Stock || !productoEditado?.ID_Categoria ) {
+    if (!productoEditado?.nombreProducto ||
+      !productoEditado?.PrecioCompra ||
+      !productoEditado?.PrecioVenta ||
+      !productoEditado?.Stock ||
+      !productoEditado?.ID_Categoria ) {
       setErrorCarga("Por favor, completa todos los campos antes de guardar.");
       return;
     }
 
     try {
-      const respuesta = await fetch(`http://localhost:3000/api/actualizarproducto/${productoEditado.ID_Producto}`, {
+      const respuesta = await fetch(`http://localhost:3000/api/actualizarproductos/${productoEditado.ID_Producto}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(productoEditado),
+       body: JSON.stringify({
+        nombreProducto: productoEditado.nombreProducto,
+        Stock: productoEditado.Stock,
+        ID_Categoria: productoEditado.ID_Categoria,
+        PrecioCompra: productoEditado.PrecioCompra,
+        PrecioVenta: productoEditado.PrecioVenta,
+        Descripcion: productoEditado.Descripcion,
+        UbicacionFotografia: productoEditado.UbicacionFotografia
+      }),
       });
 
       if (!respuesta.ok) {
@@ -303,6 +317,18 @@ const Producto = () => {
     setProductoAEliminar(producto);
     setMostrarModalEliminacion(true);
   };
+
+   // Obtener categorías para el dropdown
+    const obtenerCategorias = async () => {
+      try {
+        const respuesta = await fetch('http://localhost:3000/api/categorias');
+        if (!respuesta.ok) throw new Error('Error al cargar las categorías');
+        const datos = await respuesta.json();
+        setListaCategorias(datos);
+      } catch (error) {
+        setErrorCarga(error.message);
+      }
+    };
 
 return (
   <>
@@ -366,7 +392,7 @@ return (
         manejarCambioInput={manejarCambioInput}
         agregarProducto={agregarProducto}
         errorCarga={errorCarga}
-        categorias={listaProducto} // Asumiendo que las categorías están en la lista de productos
+        categorias={listaCategorias} // Asumiendo que las categorías están en la lista de productos
       />
 
       <ModalEdicionProducto
@@ -376,6 +402,7 @@ return (
         manejarCambioInputEdicion={manejarCambioInputEdicion}
         actualizarProducto={actualizarProducto}
         errorCarga={errorCarga}
+        listaCategorias={listaCategorias}
       />
 
       <ModalEliminacionProducto
