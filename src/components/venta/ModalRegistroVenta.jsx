@@ -1,8 +1,40 @@
-import React, { useState } from "react";
+import { useState } from "react"; // Corrige el import
 import { Modal, Form, Button, Table, Row, Col, FormControl } from "react-bootstrap";
 import AsyncSelect from 'react-select/async';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import ModalError from "../errorModal/ModalError";
+
+// Componente de botón personalizado
+const GradientButton = ({ children, onClick, variant, style, ...props }) => (
+  <Button
+    style={{
+      background: "linear-gradient(90deg, rgb(193, 143, 206), rgb(28, 118, 136))",
+      border: "none",
+      borderRadius: "50px",
+      fontFamily: "'Montserrat', sans-serif",
+      fontWeight: "600",
+      position: "relative",
+      overflow: "hidden",
+      transition: "all 0.3s ease",
+      width: "60%",
+      padding: "5px 10px",
+      fontSize: "17px",
+      ...style,
+    }}
+    onMouseEnter={(e) => {
+      e.target.style.boxShadow = "0 0 15px rgba(94, 39, 131, 0.5)";
+    }}
+    onMouseLeave={(e) => {
+      e.target.style.boxShadow = "none";
+    }}
+    variant={variant}
+    onClick={onClick}
+    {...props}
+  >
+    {children}
+  </Button>
+);
 
 const ModalRegistroVenta = ({
   mostrarModal,
@@ -15,8 +47,10 @@ const ModalRegistroVenta = ({
   agregarVenta,
   errorCarga,
   clientes,
-  productos
+  productos,
 }) => {
+  const [mensajeError, setMensajeError] = useState('');
+  const [mostrarModalError, setMostrarModalError] = useState(false);
   const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
   const [productoSeleccionado, setProductoSeleccionado] = useState(null);
   const [nuevoDetalle, setNuevoDetalle] = useState({ ID_Producto: '', Cantidad: '', PrecioVenta: '' });
@@ -31,7 +65,7 @@ const ModalRegistroVenta = ({
     );
     callback(filtrados.map(cliente => ({
       value: cliente.ID_Cliente,
-      label: `${cliente.Nombre} ${cliente.Apellido}`
+      label: `${cliente.Nombre} ${cliente.Apellido}`,
     })));
   };
 
@@ -42,7 +76,7 @@ const ModalRegistroVenta = ({
     callback(filtrados.map(producto => ({
       value: producto.ID_Producto,
       label: producto.nombreProducto,
-      precio: producto.PrecioVenta
+      precio: producto.PrecioVenta,
     })));
   };
 
@@ -57,7 +91,7 @@ const ModalRegistroVenta = ({
     setNuevoDetalle(prev => ({
       ...prev,
       ID_Producto: seleccionado ? seleccionado.value : '',
-      PrecioVenta: seleccionado ? seleccionado.precio : ''
+      PrecioVenta: seleccionado ? seleccionado.precio : '',
     }));
   };
 
@@ -69,26 +103,42 @@ const ModalRegistroVenta = ({
 
   // Agregar detalle a la lista
   const manejarAgregarDetalle = () => {
-    if (!nuevoDetalle.ID_Producto || !nuevoDetalle.Cantidad || nuevoDetalle.Cantidad <= 0) {
-      alert("Por favor, selecciona un producto y una cantidad válida.");
+    if (!nuevoDetalle.ID_Producto || !nuevoDetalle.Cantidad || nuevoDetalle.Cantidad <= 0 || !productoSeleccionado) {
+      setMensajeError("Por favor, selecciona un producto y una cantidad válida.");
+      setMostrarModalError(true);
       return;
     }
 
-    // Verificar stock
     const producto = productos.find(p => p.ID_Producto === nuevoDetalle.ID_Producto);
     if (producto && nuevoDetalle.Cantidad > producto.Stock) {
-      alert(`Stock insuficiente de ${producto.nombreProducto}. Unidades disponibles: ${producto.Stock}`);
+      setMensajeError(`Stock insuficiente de ${producto.nombreProducto}. Unidades disponibles: ${producto.Stock}`);
+      setMostrarModalError(true);
       return;
     }
 
     agregarDetalle({
-        ID_Producto: nuevoDetalle.ID_Producto ,
+      ID_Producto: nuevoDetalle.ID_Producto,
       nombreProducto: productoSeleccionado.label,
       Cantidad: parseInt(nuevoDetalle.Cantidad),
-      PrecioVenta: parseFloat(nuevoDetalle.PrecioVenta)
+      PrecioVenta: parseFloat(nuevoDetalle.PrecioVenta),
     });
     setNuevoDetalle({ ID_Producto: '', Cantidad: '', PrecioVenta: '' });
     setProductoSeleccionado(null);
+  };
+
+  // Validar antes de crear la venta
+  const manejarCrearVenta = () => {
+    if (!nuevaVenta.ID_Cliente) {
+      setMensajeError("Por favor, selecciona un cliente.");
+      setMostrarModalError(true);
+      return;
+    }
+    if (detallesVenta.length === 0) {
+      setMensajeError("Debes agregar al menos un detalle de venta.");
+      setMostrarModalError(true);
+      return;
+    }
+    agregarVenta();
   };
 
   return (
@@ -98,10 +148,10 @@ const ModalRegistroVenta = ({
       fullscreen={true}
       aria-labelledby="contained-modal-title-vcenter"
     >
-      <Modal.Header closeButton>
-        <Modal.Title>Registrar Nueva Venta</Modal.Title>
+      <Modal.Header style={{ background: "#0d7878", opacity: 0.9 }} closeButton>
+        <Modal.Title style={{ color: "#fff" }}>Registrar Nueva Venta</Modal.Title>
       </Modal.Header>
-      <Modal.Body>
+      <Modal.Body style={{ background: "#f0f7f7", opacity: 0.9 }}>
         <Form>
           <Row>
             <Col xs={12} sm={12} md={6} lg={6}>
@@ -123,7 +173,7 @@ const ModalRegistroVenta = ({
                 <Form.Label>Fecha de Venta</Form.Label>
                 <br />
                 <DatePicker
-                  selected={nuevaVenta.fecha_venta}
+                  selected={nuevaVenta.fecha_venta instanceof Date ? nuevaVenta.fecha_venta : new Date()}
                   onChange={(date) => setNuevaVenta(prev => ({ ...prev, fecha_venta: date }))}
                   className="form-control"
                   dateFormat="dd/MM/yyyy HH:mm"
@@ -138,8 +188,8 @@ const ModalRegistroVenta = ({
           <hr />
           <h5>Agregar Detalle de Venta</h5>
           <Row>
-            <Col xs={12} sm={12} md={6} lg={6}>
-              <Form.Group className="mb-3" controlId="formProducto">
+            <Col xs={12} sm={12} md={3} lg={5}>
+              <Form.Group>
                 <Form.Label>Producto</Form.Label>
                 <AsyncSelect
                   cacheOptions
@@ -152,7 +202,7 @@ const ModalRegistroVenta = ({
                 />
               </Form.Group>
             </Col>
-            <Col xs={12} sm={12} md={3} lg={3}>
+            <Col xs={12} sm={12} md={4} lg={2}>
               <Form.Group className="mb-3" controlId="formCantidad">
                 <Form.Label>Cantidad</Form.Label>
                 <FormControl
@@ -166,7 +216,7 @@ const ModalRegistroVenta = ({
                 />
               </Form.Group>
             </Col>
-            <Col xs={12} sm={12} md={3} lg={3}>
+            <Col xs={12} sm={12} md={3} lg={2}>
               <Form.Group className="mb-3" controlId="formPrecioUnitario">
                 <Form.Label>Precio Unitario</Form.Label>
                 <FormControl
@@ -178,24 +228,23 @@ const ModalRegistroVenta = ({
                 />
               </Form.Group>
             </Col>
-            <Col xs={12} className="d-flex align-items-center mt-3">
-              <Button style={{ width: '100%' }} variant="success" onClick={manejarAgregarDetalle}>
+            <Col  xs={12}  md={3}  className="d-flex align-items-center mt-3">
+              <GradientButton variant="success" onClick={manejarAgregarDetalle}>
                 Agregar Producto
-              </Button>
+              </GradientButton>
             </Col>
           </Row>
 
           {detallesVenta.length > 0 && (
             <>
               <h5 className="mt-4">Detalles Agregados</h5>
-              <Table striped bordered hover>
+              <Table className="table-striped table-primary" striped bordered hover>
                 <thead>
                   <tr>
                     <th>Producto</th>
                     <th>Cantidad</th>
                     <th>Precio Unitario</th>
                     <th>Subtotal</th>
-               
                   </tr>
                 </thead>
                 <tbody>
@@ -217,17 +266,61 @@ const ModalRegistroVenta = ({
               </Table>
             </>
           )}
-
+          <ModalError
+            mostrarModalError={mostrarModalError}
+            setMostrarModalError={setMostrarModalError}
+            mensajeError={mensajeError}
+          />
           {errorCarga && (
             <div className="text-danger mt-2">{errorCarga}</div>
           )}
         </Form>
       </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={() => setMostrarModal(false)}>
+      <Modal.Footer style={{ background: "#c7d7f0" }}>
+        <Button 
+        
+        style={{
+      background: "linear-gradient(90deg, rgb(193, 143, 206), rgb(28, 118, 136))",
+      border: "none",
+      borderRadius: "50px",
+      fontFamily: "'Montserrat', sans-serif",
+      fontWeight: "600",
+      position: "relative",
+      overflow: "hidden",
+      transition: "all 0.3s ease",
+      width: "13%",
+      padding: "5px 10px",
+      fontSize: "17px",
+    }}
+    onMouseEnter={(e) => {
+      e.target.style.boxShadow = "0 0 15px rgba(94, 39, 131, 0.5)";
+    }}
+    onMouseLeave={(e) => {
+      e.target.style.boxShadow = "none";
+    }}variant="secondary" onClick={() => setMostrarModal(false)}>
           Cancelar
         </Button>
-        <Button variant="primary" onClick={agregarVenta}>
+        <Button 
+        style={{
+      background: "linear-gradient(90deg, rgb(193, 143, 206), rgb(28, 118, 136))",
+      border: "none",
+      borderRadius: "50px",
+      fontFamily: "'Montserrat', sans-serif",
+      fontWeight: "600",
+      position: "relative",
+      overflow: "hidden",
+      transition: "all 0.3s ease",
+      width: "13%",
+      padding: "5px 10px",
+      fontSize: "17px"
+    }}
+    onMouseEnter={(e) => {
+      e.target.style.boxShadow = "0 0 15px rgba(94, 39, 131, 0.5)";
+    }}
+    onMouseLeave={(e) => {
+      e.target.style.boxShadow = "none";
+    }}
+        variant="primary" onClick={manejarCrearVenta}>
           Crear Venta
         </Button>
       </Modal.Footer>

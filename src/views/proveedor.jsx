@@ -7,6 +7,7 @@ import ModalEdicionProveedor from '../components/proveedor/ModalEdicionProveedor
 import ModalEliminacionProveedor from '../components/proveedor/ModalEliminacionProveedor';
 import Paginacion from '../components/ordenamiento/Paginacion';
 import CuadroBusquedas from '../components/busquedas/CuadroBusquedas';
+import ModalError from '../components/errorModal/ModalError';
 
 // Declaración del componente Proveedor
 const Proveedor = () => {
@@ -25,15 +26,14 @@ const Proveedor = () => {
       Correo: '',
       Direccion: ''
     });
-    
-
   // Variables de paginación
   const [paginaActual, establecerPaginaActual] = useState(1);
   const elementosPorPagina = 5;
-
   // Variables de búsqueda
   const [proveedoresFiltrados, setProveedoresFiltrados] = useState([]);
   const [textoBusqueda, setTextoBusqueda] = useState("");
+  const [mensajeError, setMensajeError] = useState('');  
+  const [mostrarModalError, setMostrarModalError] = useState(false);  
 
   // Obtención de datos al montar la vista
   useEffect(() => {
@@ -83,7 +83,8 @@ const Proveedor = () => {
    const agregarProveedor = async () => {
 
     if (!nuevoProveedor.NombreProveedor || !nuevoProveedor.Telefono || !nuevoProveedor.Correo  || !nuevoProveedor.Direccion) {
-    setErrorCarga("Por favor, completa todos los campos antes de guardar.");
+    setMensajeError("Por favor, completa todos los campos antes de guardar.");
+     setMostrarModalError(true);
     return;
     }
 
@@ -134,7 +135,8 @@ const Proveedor = () => {
   const actualizarProveedor = async () => {
     if (!proveedorEditado?.NombreProveedor || !proveedorEditado?.Telefono 
       || !proveedorEditado?.Correo  || !proveedorEditado?.Direccion  ) {
-      setErrorCarga("Por favor, completa todos los campos antes de guardar.");
+      setMensajeError("Por favor, completa todos los campos antes de guardar.");
+      setMostrarModalError(true);
       return;
     }
 
@@ -208,8 +210,28 @@ const Proveedor = () => {
         <h4>Proveedores</h4>
         <Row>
           <Col lg={2} md={4} sm={4} xs={5}>
-            <Button className='bi bi-box-seam' variant="secondary" onClick={() => setMostrarModal(true)} style={{ width: "100%" }}>
-
+            <Button className='bi bi-box-seam' variant="secondary" 
+            onClick={() => setMostrarModal(true)} 
+             style={{
+                background: "linear-gradient(90deg, rgb(193, 143, 206), rgb(28, 118, 136))",
+                border: "none",
+                borderRadius: "50px",
+                fontFamily: "'Montserrat', sans-serif",
+                fontWeight: "600",
+                position: "relative",
+                overflow: "hidden",
+                transition: "all 0.3s ease",
+                width: "100%",
+                padding: "5px 10px",
+                fontSize: "17px",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.boxShadow = "0 0 15px rgba(94, 39, 131, 0.5)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.boxShadow = "none";
+              }}
+            >
             </Button>
           </Col>
           <Col lg={5} md={8} sm={8} xs={7}>
@@ -219,7 +241,7 @@ const Proveedor = () => {
             />
           </Col>
         </Row>
-        <br/><br/>
+        
 
         <InicioProveedores
           proveedores={proveedoresPaginados}  
@@ -264,6 +286,11 @@ const Proveedor = () => {
           paginaActual={paginaActual}
           establecerPaginaActual={establecerPaginaActual}
         />
+        <ModalError
+        mostrarModalError={mostrarModalError}
+        setMostrarModalError={setMostrarModalError}
+        mensajeError={mensajeError}
+      />
       </Container>
     </>
   );

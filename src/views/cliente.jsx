@@ -6,6 +6,7 @@ import CuadroBusquedas from "../components/busquedas/CuadroBusquedas";
 import { Container,Button,Row, Col} from "react-bootstrap";
 import ModalEliminacionCliente from '../components/cliente/ModalEliminacionCliente';
 import ModalEdicionCliente from '../components/cliente/ModalActualizacionCliente';
+import ModalError from '../components/errorModal/ModalError';
 
 
 // Declaración del componente Clientes
@@ -20,7 +21,7 @@ const Clientes = () => {
   const [nuevoCliente, setNuevoCliente] = useState({
     Nombre: '',
     Apellido: '',
-    ID_tipoCliente: ''
+    ID_TipoCliente: ''
   });
     const [clientesFiltradas, setClientesFiltradas] = useState([]);
     const [textoBusqueda, setTextoBusqueda] = useState("");
@@ -30,7 +31,8 @@ const [mostrarModalEliminacion, setMostrarModalEliminacion] = useState(false);
 const [clienteAEliminar, setClienteAEliminar] = useState(null);
 const [clienteEditado, setClienteEditada] = useState(null);
 const [mostrarModalEdicion, setMostrarModalEdicion] = useState(false);
-
+const [mensajeError, setMensajeError] = useState('');  
+  const [mostrarModalError, setMostrarModalError] = useState(false);  
 
 
   // Lógica de obtención de datos con useEffect
@@ -44,7 +46,7 @@ const [mostrarModalEdicion, setMostrarModalEdicion] = useState(false);
         setClientesFiltradas(datos);
         setCargando(false);
       } catch (error) {
-        setErrorCarga(error.message);
+        setMensajeError(error.message);
         setCargando(false);
       }
     };
@@ -71,9 +73,9 @@ const clientesPaginadas = clientesFiltradas.slice(
     // Manejo la inserción de una nueva categoría
     const agregarCliente = async () => {
       if (!nuevoCliente.Nombre || !nuevoCliente.Apellido || 
-          !nuevoCliente.ID_tipoCliente ) {
-        setErrorCarga("Por favor, completa todos los campos requeridos.");
-        return;
+          !nuevoCliente.ID_TipoCliente ) {
+         setMensajeError("Por favor, completa todos los campos requeridos.");
+      setMostrarModalError(true);
       }
   
       try {
@@ -94,9 +96,9 @@ const clientesPaginadas = clientesFiltradas.slice(
           ID_tipoCliente: ''
         });
         setMostrarModal(false);
-        setErrorCarga(null);
+        setMensajeError(null);
       } catch (error) {
-        setErrorCarga(error.message);
+        setMensajeError(error.message);
       }
     };
   
@@ -111,7 +113,7 @@ const clientesPaginadas = clientesFiltradas.slice(
       setListaTipoClientes(datos);
       setListatipoclientes(datos);
     } catch (error) {
-      setErrorCarga(error.message);
+      setMensajeError(error.message);
     }
   };
 
@@ -165,8 +167,9 @@ const clientesPaginadas = clientesFiltradas.slice(
 
   //Actualizar cliente
   const actualizarCliente = async () => {
-    if (!clienteEditado?.Nombre || !clienteEditado?.Apellido || !clienteEditado?.ID_tipoCliente  ) {
-      setErrorCarga("Por favor, completa todos los campos antes de guardar.");
+    if (!clienteEditado?.Nombre || !clienteEditado?.Apellido || !clienteEditado?.ID_TipoCliente  ) {
+      setMensajeError("Por favor, completa todos los campos antes de guardar.");
+      setMostrarModalError(true);
       return;
     }
 
@@ -179,7 +182,7 @@ const clientesPaginadas = clientesFiltradas.slice(
         body: JSON.stringify({
           Nombre: clienteEditado.Nombre,
           Apellido: clienteEditado.Apellido,
-          ID_tipoCliente: clienteEditado.ID_tipoCliente
+          ID_TipoCliente: clienteEditado.ID_TipoCliente
         
         }),
       });
@@ -191,9 +194,9 @@ const clientesPaginadas = clientesFiltradas.slice(
       await obtenerClientes();
       setMostrarModalEdicion(false);
       setClienteEditada(null);
-      setErrorCarga(null);
+      setMensajeError(null);
     } catch (error) {
-      setErrorCarga(error.message);
+      setMensajeError(error.message);
     }
   };
 
@@ -201,9 +204,6 @@ const clientesPaginadas = clientesFiltradas.slice(
     setClienteEditada(cliente);
     setMostrarModalEdicion(true);
   };
-
-
-
 
   // Renderizado de la vista
   return (
@@ -214,7 +214,28 @@ const clientesPaginadas = clientesFiltradas.slice(
 
         <Row>
     <Col lg={2} md={4} sm={4} xs={5}>
-      <Button className='bi bi-person-add' variant="secondary" onClick={() => setMostrarModal(true)} style={{ width: "60%" }}>
+      <Button className='bi bi-person-add' variant="secondary"
+       onClick={() => setMostrarModal(true)} 
+       style={{
+                background: "linear-gradient(90deg, rgb(193, 143, 206), rgb(28, 118, 136))",
+                border: "none",
+                borderRadius: "50px",
+                fontFamily: "'Montserrat', sans-serif",
+                fontWeight: "600",
+                position: "relative",
+                overflow: "hidden",
+                transition: "all 0.3s ease",
+                width: "100%",
+                padding: "5px 10px",
+                fontSize: "17px",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.boxShadow = "0 0 15px rgba(94, 39, 131, 0.5)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.boxShadow = "none";
+              }}
+       >
        
       </Button>
     </Col>
@@ -264,7 +285,11 @@ const clientesPaginadas = clientesFiltradas.slice(
           errorCarga={errorCarga}
           actualizartipoClientes={listaactualizadatipocliente}
         />
-
+ <ModalError
+        mostrarModalError={mostrarModalError}
+        setMostrarModalError={setMostrarModalError}
+        mensajeError={mensajeError}
+      />
 
       </Container>
     </>

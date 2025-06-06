@@ -10,14 +10,24 @@ const ModalDetallesVenta = ({ mostrarModal, setMostrarModal, detalles, cargandoD
       fullscreen={true}
       aria-labelledby="detalles-venta-modal"
     >
-      <Modal.Header closeButton>
-        <Modal.Title id="detalles-venta-modal">Detalles de la Venta</Modal.Title>
+      <Modal.Header 
+      style={{ background: "#0d7878",
+        opacity: 0.9
+       }} 
+      closeButton>
+        <Modal.Title
+        style={{ color: "#fff" }}
+        id="detalles-venta-modal">Detalles de la Venta</Modal.Title>
       </Modal.Header>
-      <Modal.Body>
+      <Modal.Body
+      style={{  background: "#f0f7f7",
+          opacity: 0.9, 
+      }}
+      >
         {cargandoDetalles && <div>Cargando detalles...</div>}
         {!cargandoDetalles && !errorDetalles && detalles.length > 0 && (
           <Container>
-            <Table striped bordered hover responsive>
+            <Table className="bi bi-secondary table-striped table-primary" striped bordered hover responsive>
               <thead>
                 <tr>
                   <th>ID Detalle</th>
@@ -44,9 +54,29 @@ const ModalDetallesVenta = ({ mostrarModal, setMostrarModal, detalles, cargandoD
           </Container>
         )}
       </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={() => setMostrarModal(false)}>
-          Cerrar
+      <Modal.Footer style={{background: "#c7d7f0"}}>
+        <Button 
+        style={{
+                background: "linear-gradient(90deg, rgb(193, 143, 206), rgb(28, 118, 136))",
+                border: "none",
+                borderRadius: "50px",
+                fontFamily: "'Montserrat', sans-serif",
+                fontWeight: "600",
+                position: "relative",
+                overflow: "hidden",
+                transition: "all 0.3s ease",
+                width: "13%",
+                padding: "5px 10px",
+                fontSize: "17px",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.boxShadow = "0 0 15px rgba(94, 39, 131, 0.5)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.boxShadow = "none";
+              }}
+        variant="secondary" onClick={() => setMostrarModal(false)}>
+          Cerrar Detalle
         </Button>
       </Modal.Footer>
     </Modal>

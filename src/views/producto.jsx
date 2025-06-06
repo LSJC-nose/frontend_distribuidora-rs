@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import InicioProductos from '../components/producto/InicioProductos';
-import { Container, Button, Row, Col } from "react-bootstrap";
+import { Container, Button, Row, Col } from 'react-bootstrap';
 import ModalRegistroProducto from '../components/producto/ModalRegistroProducto';
 import ModalEdicionProducto from '../components/producto/ModalEdicionProducto';
 import ModalEliminacionProducto from '../components/producto/ModalEliminacionProducto';
+import ModalError from '../components/errorModal/ModalError'; // Import the new modal
 import Paginacion from '../components/ordenamiento/Paginacion';
 import CuadroBusquedas from '../components/busquedas/CuadroBusquedas';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
-import { MdAdd } from 'react-icons/md'; // Importa el ícono
+import { MdAdd } from 'react-icons/md';
 
 const Producto = () => {
   const [listaProducto, setListaProducto] = useState([]);
@@ -22,6 +23,8 @@ const Producto = () => {
   const [mostrarModalEdicion, setMostrarModalEdicion] = useState(false);
   const [productoAEliminar, setProductoAEliminar] = useState(null);
   const [mostrarModalEliminacion, setMostrarModalEliminacion] = useState(false);
+  const [mostrarModalError, setMostrarModalError] = useState(false); // New state for error modal
+  const [mensajeError, setMensajeError] = useState(''); // New state for error message
   const [nuevoProducto, setNuevoProducto] = useState({
     nombreProducto: '',
     Descripcion: '',
@@ -34,7 +37,7 @@ const Producto = () => {
   const [paginaActual, establecerPaginaActual] = useState(1);
   const elementosPorPagina = 4;
   const [productosFiltrados, setProductosFiltrados] = useState([]);
-  const [textoBusqueda, setTextoBusqueda] = useState("");
+  const [textoBusqueda, setTextoBusqueda] = useState('');
 
   useEffect(() => {
     obtenerProducto();
@@ -50,8 +53,21 @@ const Producto = () => {
       setProductosFiltrados(datos);
       setCargando(false);
     } catch (error) {
-      setErrorCarga(error.message);
+      setMensajeError(error.message);
+      setMostrarModalError(true);
       setCargando(false);
+    }
+  };
+
+  const obtenerCategorias = async () => {
+    try {
+      const respuesta = await fetch('http://localhost:3000/api/categorias');
+      if (!respuesta.ok) throw new Error('Error al cargar las categorías');
+      const datos = await respuesta.json();
+      setListaCategorias(datos);
+    } catch (error) {
+      setMensajeError(error.message);
+      setMostrarModalError(true);
     }
   };
 
@@ -72,7 +88,8 @@ const Producto = () => {
   const generarPDFProductos = () => {
     try {
       if (!productosFiltrados || productosFiltrados.length === 0) {
-        alert('No hay productos para generar el PDF.');
+        setMensajeError('No hay productos para generar el PDF.');
+        setMostrarModalError(true);
         return;
       }
       const doc = new jsPDF();
@@ -106,15 +123,16 @@ const Producto = () => {
       const fecha = new Date().toISOString().slice(0, 10);
       doc.save(`Productos_${fecha}.pdf`);
     } catch (error) {
-      console.error('Error al generar el PDF:', error);
-      alert('Error al generar el PDF: ' + error.message);
+      setMensajeError('Error al generar el PDF: ' + error.message);
+      setMostrarModalError(true);
     }
   };
 
   const generarPDFDetalleProducto = (producto) => {
     try {
       if (!producto) {
-        alert('No se proporcionó un producto válido.');
+        setMensajeError('No se proporcionó un producto válido.');
+        setMostrarModalError(true);
         return;
       }
       const doc = new jsPDF();
@@ -153,15 +171,16 @@ const Producto = () => {
       const fecha = new Date().toISOString().slice(0, 10);
       doc.save(`Producto_${producto.nombreProducto || 'SinNombre'}_${fecha}.pdf`);
     } catch (error) {
-      console.error('Error al generar el PDF de detalle:', error);
-      alert('Error al generar el PDF de detalle: ' + error.message);
+      setMensajeError('Error al generar el PDF de detalle: ' + error.message);
+      setMostrarModalError(true);
     }
   };
 
   const exportarExcelProductos = () => {
     try {
       if (!productosFiltrados || productosFiltrados.length === 0) {
-        alert('No hay productos para generar el Excel.');
+        setMensajeError('No hay productos para generar el Excel.');
+        setMostrarModalError(true);
         return;
       }
       const datos = productosFiltrados.map(producto => ({
@@ -183,8 +202,8 @@ const Producto = () => {
       const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
       saveAs(blob, nombreArchivo);
     } catch (error) {
-      console.error('Error al generar el Excel:', error);
-      alert('Error al generar el Excel: ' + error.message);
+      setMensajeError('Error al generar el Excel: ' + error.message);
+      setMostrarModalError(true);
     }
   };
 
@@ -193,10 +212,18 @@ const Producto = () => {
     paginaActual * elementosPorPagina
   );
 
-
   const agregarProducto = async () => {
-    if (!nuevoProducto.nombreProducto || !nuevoProducto.Descripcion || !nuevoProducto.PrecioCompra || !nuevoProducto.PrecioVenta || !nuevoProducto.Stock || !nuevoProducto.ID_Categoria ) {
-      setErrorCarga("Por favor, completa todos los campos antes de guardar.");
+    if (
+      !nuevoProducto.nombreProducto ||
+      !nuevoProducto.Descripcion ||
+      !nuevoProducto.PrecioCompra ||
+      !nuevoProducto.PrecioVenta ||
+      !nuevoProducto.Stock ||
+      !nuevoProducto.ID_Categoria
+    ) {
+      
+      setMensajeError('Por favor, completa todos los campos antes de guardar.');
+      setMostrarModalError(true);
       return;
     }
 
@@ -214,7 +241,7 @@ const Producto = () => {
       }
 
       await obtenerProducto();
-      setNuevoProducto({ 
+      setNuevoProducto({
         nombreProducto: '',
         Descripcion: '',
         PrecioCompra: '',
@@ -226,7 +253,8 @@ const Producto = () => {
       setMostrarModal(false);
       setErrorCarga(null);
     } catch (error) {
-      setErrorCarga(error.message);
+      setMensajeError(error.message);
+      setMostrarModalError(true);
     }
   };
 
@@ -247,12 +275,15 @@ const Producto = () => {
   };
 
   const actualizarProducto = async () => {
-    if (!productoEditado?.nombreProducto ||
+    if (
+      !productoEditado?.nombreProducto ||
       !productoEditado?.PrecioCompra ||
       !productoEditado?.PrecioVenta ||
       !productoEditado?.Stock ||
-      !productoEditado?.ID_Categoria ) {
-      setErrorCarga("Por favor, completa todos los campos antes de guardar.");
+      !productoEditado?.ID_Categoria
+    ) {
+      setMensajeError('Por favor, completa todos los campos antes de guardar.');
+      setMostrarModalError(true);
       return;
     }
 
@@ -262,15 +293,15 @@ const Producto = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-       body: JSON.stringify({
-        nombreProducto: productoEditado.nombreProducto,
-        Stock: productoEditado.Stock,
-        ID_Categoria: productoEditado.ID_Categoria,
-        PrecioCompra: productoEditado.PrecioCompra,
-        PrecioVenta: productoEditado.PrecioVenta,
-        Descripcion: productoEditado.Descripcion,
-        UbicacionFotografia: productoEditado.UbicacionFotografia
-      }),
+        body: JSON.stringify({
+          nombreProducto: productoEditado.nombreProducto,
+          Stock: productoEditado.Stock,
+          ID_Categoria: productoEditado.ID_Categoria,
+          PrecioCompra: productoEditado.PrecioCompra,
+          PrecioVenta: productoEditado.PrecioVenta,
+          Descripcion: productoEditado.Descripcion,
+          UbicacionFotografia: productoEditado.UbicacionFotografia
+        }),
       });
 
       if (!respuesta.ok) {
@@ -282,7 +313,8 @@ const Producto = () => {
       setProductoEditado(null);
       setErrorCarga(null);
     } catch (error) {
-      setErrorCarga(error.message);
+      setMensajeError(error.message);
+      setMostrarModalError(true);
     }
   };
 
@@ -309,7 +341,8 @@ const Producto = () => {
       setProductoAEliminar(null);
       setErrorCarga(null);
     } catch (error) {
-      setErrorCarga(error.message);
+      setMensajeError(error.message);
+      setMostrarModalError(true);
     }
   };
 
@@ -318,53 +351,90 @@ const Producto = () => {
     setMostrarModalEliminacion(true);
   };
 
-   // Obtener categorías para el dropdown
-    const obtenerCategorias = async () => {
-      try {
-        const respuesta = await fetch('http://localhost:3000/api/categorias');
-        if (!respuesta.ok) throw new Error('Error al cargar las categorías');
-        const datos = await respuesta.json();
-        setListaCategorias(datos);
-      } catch (error) {
-        setErrorCarga(error.message);
-      }
-    };
-
-return (
-  <>
+  return (
     <Container className="mt-5">
-      <hr></hr>
-      <h4 className='text-dark'>Productos</h4>
-      <Row>
-        <Col lg={2} md={4} sm={4} xs={5}>
-         
-            <Button 
-              className="bi bi-box-seam-fill" 
-              variant="secondary" 
-              onClick={() => setMostrarModal(true)}
-              style={{ width: "100%" }} 
-            />
-          
+      <hr />
+      <h4 className="text-dark">Productos</h4>
+      <Row className="d-flex align-items-center" style={{ gap: '5px' }}>
+        <Col xs={3} sm={2} md={2} lg={1} className="p-0">
+          <Button
+            className="bi bi-box-seam-fill"
+            variant="secondary"
+            onClick={() => setMostrarModal(true)}
+            style={{
+              background: 'linear-gradient(90deg, rgb(193, 143, 206), rgb(28, 118, 136))',
+              border: 'none',
+              borderRadius: '50px',
+              fontFamily: "'Montserrat', sans-serif",
+              fontWeight: '600',
+              position: 'relative',
+              overflow: 'hidden',
+              transition: 'all 0.3s ease',
+              width: '100%',
+              padding: '5px 10px',
+              fontSize: '14px',
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.boxShadow = '0 0 15px rgba(94, 39, 131, 0.5)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.boxShadow = 'none';
+            }}
+          >
+            <MdAdd size={16} />
+          </Button>
         </Col>
-        <Col lg={2} md={4} sm={4} xs={5}>
-         
-            <Button
-              className='bi bi-filetype-pdf'
-              variant="secondary"
-              onClick={generarPDFProductos}
-              style={{ width: "100%" }} 
-            />
-         
+        <Col xs={3} sm={2} md={2} lg={1} className="p-0">
+          <Button
+            className="bi bi-filetype-pdf"
+            variant="secondary"
+            onClick={generarPDFProductos}
+            style={{
+              background: 'linear-gradient(90deg, rgb(193, 143, 206), rgb(28, 118, 136))',
+              border: 'none',
+              borderRadius: '50px',
+              fontFamily: "'Montserrat', sans-serif",
+              fontWeight: '600',
+              position: 'relative',
+              overflow: 'hidden',
+              transition: 'all 0.3s ease',
+              width: '100%',
+              padding: '5px 10px',
+              fontSize: '14px',
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.boxShadow = '0 0 15px rgba(94, 39, 131, 0.5)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.boxShadow = 'none';
+            }}
+          />
         </Col>
-        <Col lg={2} md={4} sm={4} xs={5}> 
-          
-            <Button
-              className='bi bi-file-earmark-excel'
-              variant="secondary"
-              onClick={exportarExcelProductos}
-              style={{ width: "100%" }} 
-            />
-        
+        <Col xs={3} sm={2} md={2} lg={1} className="p-0">
+          <Button
+            className="bi bi-file-earmark-excel"
+            variant="secondary"
+            onClick={exportarExcelProductos}
+            style={{
+              background: 'linear-gradient(90deg, rgb(193, 143, 206), rgb(28, 118, 136))',
+              border: 'none',
+              borderRadius: '50px',
+              fontFamily: "'Montserrat', sans-serif",
+              fontWeight: '600',
+              position: 'relative',
+              overflow: 'hidden',
+              transition: 'all 0.3s ease',
+              width: '100%',
+              padding: '5px 10px',
+              fontSize: '14px',
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.boxShadow = '0 0 15px rgba(94, 39, 131, 0.5)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.boxShadow = 'none';
+            }}
+          />
         </Col>
       </Row>
       <hr />
@@ -374,17 +444,14 @@ return (
           manejarCambioBusqueda={manejarCambioBusqueda}
         />
       </Col>
-
-   
-        <InicioProductos
-          productos={productosPaginados}
-          cargando={cargando}
-          error={errorCarga}
-          abrirModalEdicion={abrirModalEdicion}
-          abrirModalEliminacion={abrirModalEliminacion}
-          generarPDFDetalleProducto={generarPDFDetalleProducto}
-        />
-  
+      <InicioProductos
+        productos={productosPaginados}
+        cargando={cargando}
+        error={errorCarga}
+        abrirModalEdicion={abrirModalEdicion}
+        abrirModalEliminacion={abrirModalEliminacion}
+        generarPDFDetalleProducto={generarPDFDetalleProducto}
+      />
       <ModalRegistroProducto
         mostrarModal={mostrarModal}
         setMostrarModal={setMostrarModal}
@@ -392,9 +459,8 @@ return (
         manejarCambioInput={manejarCambioInput}
         agregarProducto={agregarProducto}
         errorCarga={errorCarga}
-        categorias={listaCategorias} // Asumiendo que las categorías están en la lista de productos
+        categorias={listaCategorias}
       />
-
       <ModalEdicionProducto
         mostrarModalEdicion={mostrarModalEdicion}
         setMostrarModalEdicion={setMostrarModalEdicion}
@@ -404,24 +470,24 @@ return (
         errorCarga={errorCarga}
         listaCategorias={listaCategorias}
       />
-
       <ModalEliminacionProducto
         mostrarModalEliminacion={mostrarModalEliminacion}
         setMostrarModalEliminacion={setMostrarModalEliminacion}
         eliminarProducto={eliminarProducto}
       />
-
+      <ModalError
+        mostrarModalError={mostrarModalError}
+        setMostrarModalError={setMostrarModalError}
+        mensajeError={mensajeError}
+      />
       <Paginacion
         elementosPorPagina={elementosPorPagina}
         totalElementos={productosFiltrados.length}
         paginaActual={paginaActual}
         establecerPaginaActual={establecerPaginaActual}
       />
-
-     
     </Container>
-  </>
-);
+  );
 };
 
 export default Producto;

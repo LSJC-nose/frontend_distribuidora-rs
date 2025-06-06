@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Container, Nav, Navbar, Offcanvas,NavDropdown } from "react-bootstrap";
-import logo from "/Logo_Rivas_Encabezado.png"; // Importación del logo de la ferretería
+import logo from "../../assets/Logo_Rivas_Encabezado.png"; // Importación del logo de la ferretería
 import "bootstrap-icons/font/bootstrap-icons.css"; // Importación de íconos de Bootstrap
 import "../../App.css"; // Estilos personalizados de la aplicación
 

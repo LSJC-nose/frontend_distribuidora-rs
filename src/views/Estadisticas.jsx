@@ -50,7 +50,7 @@ const Estadisticas = () => {
 
   const cargarComprasPorCliente = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/comprasPorCliente');
+      const response = await fetch('http://localhost:3000/api/comprasporcliente');
       if (!response.ok) throw new Error(`Error HTTP (Compras por Cliente): ${response.status}`);
       const data = await response.json();
       const array = Array.isArray(data.data) ? data.data : Array.isArray(data) ? data : [];
@@ -59,10 +59,10 @@ const Estadisticas = () => {
         setCantidades([]);
         setError(prev => prev ? `${prev}; No hay datos de compras por cliente` : 'No hay datos de compras por cliente');
       } else {
-        const valid = array.every(item => item.Nombre && item.Apellido && item.Compras != null);
+        const valid = array.every(item => item.Nombre && item.Apellido && item.compras != null);
         if (!valid) throw new Error('Estructura inesperada en compras por cliente');
         setClientes(array.map(item => `${item.Nombre} ${item.Apellido}`));
-        setCantidades(array.map(item => Number(item.Compras) || 0));
+        setCantidades(array.map(item => Number(item.compras) || 0));
       }
     } catch (err) {
       console.error(err);
@@ -94,9 +94,35 @@ const Estadisticas = () => {
   return (
     <Container className="mt-5">
       <h4>Estadísticas</h4>
-      <Button variant="primary" onClick={() => setMostrarChatModal(true)}>
-        Consultar con IA
-      </Button>
+
+      <Button
+      onClick={() => setMostrarChatModal(true)}
+                        type="submit"
+                        className=""
+                        style={{
+                          background: "linear-gradient(90deg,hsl(289, 39.00%, 83.90%),rgb(21, 156, 173))",
+                          border: "none",
+                          borderRadius: "50px",
+                          fontFamily: "'Montserrat', sans-serif",
+                          fontWeight: "600",
+                          position: "relative",
+                          overflow: "hidden",
+                          transition: "all 0.3s ease",
+                        }}
+                        onMouseEnter={(e) => {
+                          e.target.style.boxShadow = "0 0 15px rgba(35, 9, 53, 0.5)";
+                        }}
+                        onMouseLeave={(e) => {
+                          e.target.style.boxShadow = "none";
+                        }}
+                      >
+                        <span style={{ position: "relative", zIndex: 1,color:"#07316f", }}>
+                         Busca con IA
+                        </span>
+                        <div
+                          className="shine-effect"
+                        />
+                      </Button>
       {error && <Alert variant="danger" className="mt-3">{error}</Alert>}
       <Row className="mt-4">
         <Col xs={12} md={6} className="mb-4">

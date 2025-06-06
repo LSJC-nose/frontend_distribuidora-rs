@@ -7,7 +7,7 @@ import CuadroBusquedas from "../components/busquedas/CuadroBusquedas";
 import ModalRegistroCategoria from '../components/categoria/ModalRegistroCategoria';
 import ModalEliminacionCategoria from '../components/categoria/ModalEliminacionCategoria';
 import ModalEdicionCategoria from '../components/categoria/ModalActualizacionCategoria';
-
+import ModalError from '../components/errorModal/ModalError';
 
 
 // Declaración del componente Categorias
@@ -15,7 +15,9 @@ const Categorias = () => {
   // Estados para manejar los datos, carga y errores
   const [listaCategorias, setListaCategorias] = useState([]); // Almacena los datos de la API
   const [cargando, setCargando] = useState(true);            // Controla el estado de carga
-  const [errorCarga, setErrorCarga] = useState(null);        // Maneja errores de la petición
+  const [errorCarga, setErrorCarga] = useState(null);
+  const [mensajeError, setMensajeError] = useState('');  
+  const [mostrarModalError, setMostrarModalError] = useState(false);      // Maneja errores de la petición
   const [mostrarModal, setMostrarModal] = useState(false);
   const [categoriasFiltradas, setCategoriasFiltradas] = useState([]);
   const [textoBusqueda, setTextoBusqueda] = useState("");
@@ -43,7 +45,7 @@ const [mostrarModalEdicion, setMostrarModalEdicion] = useState(false);
       setCategoriasFiltradas(datos);   // Actualiza el estado con los datos
       setCargando(false);           // Indica que la carga terminó
     } catch (error) {
-      setErrorCarga(error.message); // Guarda el mensaje de error
+      setMensajeError(error.message); // Guarda el mensaje de error
       setCargando(false);           // Termina la carga aunque haya error
     }
   };
@@ -95,8 +97,12 @@ const categoriasPaginadas = categoriasFiltradas.slice(
   // Manejo la inserción de una nueva categoría
   const agregarCategoria = async () => {
 
-    if (!nuevaCategoria.NombreCategoria ) {
-    setErrorCarga("Por favor, completa todos los campos antes de guardar.");
+    if (
+      !nuevaCategoria.NombreCategoria 
+    ) {
+
+    setMensajeError("Por favor, completa todos los campos antes de guardar .");
+     setMostrarModalError(true);
     return;
     }
 
@@ -152,7 +158,8 @@ const categoriasPaginadas = categoriasFiltradas.slice(
   //Actualizar categoria
   const actualizarCategoria = async () => {
     if (!categoriaEditada?.NombreCategoria) {
-      setErrorCarga("Por favor, completa todos los campos antes de guardar.");
+      setMensajeError("Por favor, completa todos los campos antes de guardar.");
+      setMostrarModalError(true);
       return;
     }
 
@@ -199,8 +206,28 @@ const categoriasPaginadas = categoriasFiltradas.slice(
 
          <Row>
     <Col lg={2} md={4} sm={4} xs={5}>
-      <Button className='bi bi-list-ul' variant="primary" onClick={() => setMostrarModal(true)} style={{ width: "100%" }}>
-        
+      <Button className='bi bi-list-ul' variant="primary" 
+      onClick={() => setMostrarModal(true)} 
+      style={{
+                background: "linear-gradient(90deg, rgb(193, 143, 206), rgb(28, 118, 136))",
+                border: "none",
+                borderRadius: "50px",
+                fontFamily: "'Montserrat', sans-serif",
+                fontWeight: "600",
+                position: "relative",
+                overflow: "hidden",
+                transition: "all 0.3s ease",
+                width: "100%",
+                padding: "5px 10px",
+                fontSize: "17px",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.boxShadow = "0 0 15px rgba(94, 39, 131, 0.5)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.boxShadow = "none";
+              }}
+      >
       </Button>
     </Col>
     <Col lg={5} md={8} sm={8} xs={7}>
@@ -250,7 +277,11 @@ const categoriasPaginadas = categoriasFiltradas.slice(
           errorCarga={errorCarga}
         />
 
-
+<ModalError
+        mostrarModalError={mostrarModalError}
+        setMostrarModalError={setMostrarModalError}
+        mensajeError={mensajeError}
+      />
 
 
       </Container>

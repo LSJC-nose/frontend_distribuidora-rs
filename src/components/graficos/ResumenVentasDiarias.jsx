@@ -13,9 +13,9 @@ const ResumenVentasDiarias = ({dias, totales_por_dia }) => {
       {
         label: 'Total Ventas por Día',
         data: totales_por_dia,
-        backgroundColor: 'rgba(54, 162, 235, 0.6)', // Azul claro (mismo color que usaste)
-        borderColor: 'rgba(54, 162, 235, 1)', // Azul oscuro
-        borderWidth: 1,
+        backgroundColor: 'rgba(26, 173, 192, 0.6)', // Azul claro (mismo color que usaste)
+        borderColor: 'rgb(111, 16, 173)', // Azul oscuro
+        borderWidth: 2,
       },
     ],
   };
@@ -96,11 +96,32 @@ const ResumenVentasDiarias = ({dias, totales_por_dia }) => {
 };
 
   return (
-    <Card>
+    <Card 
+    style={{
+      background: "linear-gradient(90deg,rgb(218, 239, 241), rgba(201, 236, 243, 0.8))",
+    }}
+    >
       <Card.Body>
         <Card.Title>Ventas por Día</Card.Title>
         <Line ref={chartRef} data={data} options={options} />
-        <Button className="btn btn-primary mt-3" onClick={generarPDF}>
+        <Button className="btn btn-primary mt-3" onClick={generarPDF}
+        style={{
+        background: "linear-gradient(90deg,rgb(193, 143, 206),rgb(28, 118, 136))",
+        border: "none",
+        borderRadius: "50px",
+        fontFamily: "'Montserrat', sans-serif",
+        fontWeight: "600",
+        position: "relative",
+        overflow: "hidden",
+        transition: "all 0.3s ease",
+         }}
+        onMouseEnter={(e) => {
+        e.target.style.boxShadow = "0 0 15px rgba(94, 39, 131, 0.5)";
+         }}
+        onMouseLeave={(e) => {
+        e.target.style.boxShadow = "none";
+         }}  
+        >
         Generar Reporte <i className="bi bi-download"></i>
       </Button>
       </Card.Body>

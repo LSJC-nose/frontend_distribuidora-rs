@@ -14,7 +14,7 @@ const ProductosBajoStock = ({ productos }) => {
       {
         label: 'Stock',
         data: productos.map((producto) => producto.Stock || 0),
-        backgroundColor: 'rgba(231, 216, 0, 0.6)',
+        backgroundColor: 'rgba(187, 27, 166, 0.6)',
         borderColor: 'rgba(255, 192, 203, 1)',
         borderWidth: 1,
       },
@@ -98,13 +98,34 @@ const ProductosBajoStock = ({ productos }) => {
   }
 
   return (
-    <Card>
+    <Card
+    style={{
+      background: "linear-gradient(90deg,rgb(218, 239, 241), rgba(201, 236, 243, 0.8))",
+    }}
+    >
       <Card.Body>
         <Card.Title>Productos con Bajo Stock</Card.Title>
         <Bar ref={chartRef} data={data} options={options} />
-        <Button className="btn btn-primary mt-3" onClick={generarPDF}>
-          Generar Reporte <i className="bi bi-download"></i>
-        </Button>
+         <Button className="btn btn-primary mt-3" onClick={generarPDF}
+               style={{
+        background: "linear-gradient(90deg,rgb(193, 143, 206),rgb(28, 118, 136))",
+        border: "none",
+        borderRadius: "50px",
+        fontFamily: "'Montserrat', sans-serif",
+        fontWeight: "600",
+        position: "relative",
+        overflow: "hidden",
+        transition: "all 0.3s ease",
+         }}
+        onMouseEnter={(e) => {
+        e.target.style.boxShadow = "0 0 15px rgba(94, 39, 131, 0.5)";
+         }}
+        onMouseLeave={(e) => {
+        e.target.style.boxShadow = "none";
+         }}        
+         >
+        Generar Reporte <i className="bi bi-download"></i>
+      </Button>
       </Card.Body>
     </Card>
   );

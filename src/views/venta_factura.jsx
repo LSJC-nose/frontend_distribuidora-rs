@@ -7,6 +7,8 @@
   import ModalRegistroVenta from '../components/venta/ModalRegistroVenta';
   import ModalActualizacionVenta from '../components/venta/ModalActualizacionVenta';
   import CuadroBusquedas from "../components/busquedas/CuadroBusquedas";
+  import ModalError from '../components/errorModal/ModalError';
+
 
   // Declaración del componente Ventas
   const Ventas = () => {
@@ -36,6 +38,8 @@
     const [paginaActual, establecerPaginaActual] = useState(1);
     const elementosPorPagina = 5; // Número de elementos por página
     const [textoBusqueda, setTextoBusqueda] = useState("");
+    const [mensajeError, setMensajeError] = useState('');  
+    const [mostrarModalError, setMostrarModalError] = useState(false);  
 
     // Lógica de obtención de datos con useEffect
     useEffect(() => {
@@ -120,7 +124,8 @@
 
     const agregarVenta = async () => {
       if (!nuevaVenta.ID_Cliente || !nuevaVenta.fecha_venta || detallesNuevos.length === 0) {
-        setErrorCarga("Por favor, completa todos los campos y agrega al menos un detalle.");
+        setMensajeError("Por favor, completa todos los campos y agrega al menos un detalle.");
+        setMostrarModalError(true);
         return;
       }
 
@@ -209,7 +214,8 @@
   const actualizarVenta = async (ventaActualizada, detalles) => {
 
     if (!ventaActualizada.ID_Cliente  || !ventaActualizada.fecha_venta || detalles.length === 0) {
-      setErrorCarga("Por favor, completa todos los campos y agrega al menos un detalle.");
+      setMensajeError("Por favor, completa todos los campos y agrega al menos un detalle.");
+      setMostrarModalError(true);
       return;
     }
     try {      
@@ -266,20 +272,40 @@
     <h3>Ventas con detalle </h3>
           <Row>
       <Col lg={2} md={4} sm={4} xs={5}>
-        <Button className='bi bi-bag-plus-fill' variant="secondary" onClick={() =>
-          setMostrarModalRegistro(true)} style={{ width: "50%",fontSize: "18px", margin: 0}}>
+        <Button
+         style={{
+                background: "linear-gradient(90deg, rgb(193, 143, 206), rgb(28, 118, 136))",
+                border: "none",
+                borderRadius: "50px",
+                fontFamily: "'Montserrat', sans-serif",
+                fontWeight: "600",
+                position: "relative",
+                overflow: "hidden",
+                transition: "all 0.3s ease",
+                width: "100%",
+                padding: "5px 10px",
+                fontSize: "17px",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.boxShadow = "0 0 15px rgba(94, 39, 131, 0.5)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.boxShadow = "none";
+              }}  
+        
+        className='bi bi-bag-plus-fill' variant="secondary" onClick={() =>
+          setMostrarModalRegistro(true)}>
         </Button>
       </Col>
       <Col lg={5} md={8} sm={8} xs={7}>
         <CuadroBusquedas
+          placeholder="Buscar por cliente"
           textoBusqueda={textoBusqueda}
           manejarCambioBusqueda={manejarCambioBusqueda}
         />
       </Col>
-    </Row>  
-        <br />
-          <br />
-
+    </Row> 
+          
           {/* Pasa los estados como props al componente TablaVentas */}
           <TablaVentas
             ventas={ventasPaginadas}
@@ -333,6 +359,12 @@
             clientes={clientes}
             productos={productos}
           />
+
+          <ModalError
+        mostrarModalError={mostrarModalError}
+        setMostrarModalError={setMostrarModalError}
+        mensajeError={mensajeError}
+      />
         </Container>
       </>
     );

@@ -6,6 +6,7 @@ import ModalEliminacionCompra from '../components/compra_factura/ModalEliminacio
 import ModalRegistroCompra from '../components/compra_factura/ModalRegistroCompra';
 import { Container, Button, Row, Col } from 'react-bootstrap';
 import CuadroBusquedas from "../components/busquedas/CuadroBusquedas";
+import ModalError from '../components/errorModal/ModalError';
 
 const Compras = () => {
   const [listaCompras, setListaCompras] = useState([]);
@@ -37,6 +38,8 @@ const Compras = () => {
   const [mostrarModalActualizacion, setMostrarModalActualizacion] = useState(false);
   const [compraAEditar, setCompraAEditar] = useState(null);
   const [detallesEditados, setDetallesEditados] = useState([]);
+    const [mensajeError, setMensajeError] = useState('');  
+    const [mostrarModalError, setMostrarModalError] = useState(false);  
 
   const obtenerCompras = async () => {
     try {
@@ -128,6 +131,15 @@ const Compras = () => {
 
   const agregarCompra = async () => {
 
+    if (!nuevaCompra.ID_Proveedores 
+      || !nuevaCompra.fecha_compra 
+    ) {
+    setMensajeError("Por favor, completa todos los campos y agrega al menos un detalle.");
+     setMostrarModalError(true);
+    return;
+    }
+
+
     try {
       const compraData = {
         ID_Proveedores: nuevaCompra.ID_Proveedores,
@@ -183,7 +195,8 @@ const Compras = () => {
 
   const actualizarCompra = async (compraActualizada, detalles) => {
     if (!compraActualizada.ID_Proveedores || !compraActualizada.fecha_compra || detalles.length === 0) {
-      setErrorCarga("Por favor, completa todos los campos y agrega al menos un detalle.");
+      setMensajeError("Por favor, completa todos los campos y agrega al menos un detalle.");
+      setMostrarModalError(true);
       return;
     }
     try {
@@ -228,8 +241,6 @@ const comprasPaginadas = comprasFiltradas.slice(
     setComprasFiltradas(filtradas);
   };
 
-
-
   return (
     <Container className="mt-5">
       <br />
@@ -237,7 +248,27 @@ const comprasPaginadas = comprasFiltradas.slice(
        <Row>
     <Col lg={2} md={4} sm={4} xs={5}>
       <Button className='bi bi-bag-plus-fill' variant="secondary" onClick={() =>
-         setMostrarModalRegistro(true)} style={{ width: "50%",fontSize: "18px", margin: 0}}>
+         setMostrarModalRegistro(true)} 
+         style={{
+                background: "linear-gradient(90deg, rgb(193, 143, 206), rgb(28, 118, 136))",
+                border: "none",
+                borderRadius: "50px",
+                fontFamily: "'Montserrat', sans-serif",
+                fontWeight: "600",
+                position: "relative",
+                overflow: "hidden",
+                transition: "all 0.3s ease",
+                width: "100%",
+                padding: "5px 10px",
+                fontSize: "17px",
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.boxShadow = "0 0 15px rgba(94, 39, 131, 0.5)";
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.boxShadow = "none";
+              }}
+         >
       </Button>
     </Col>
     <Col lg={5} md={8} sm={8} xs={7}>
@@ -247,7 +278,7 @@ const comprasPaginadas = comprasFiltradas.slice(
       />
     </Col>
   </Row>  
-      <br />
+    
       <TablaCompras
         compras={comprasPaginadas} 
         
@@ -296,6 +327,11 @@ const comprasPaginadas = comprasFiltradas.slice(
         errorCarga={errorCarga}
         proveedores={proveedores}
         productos={productos}
+      />
+       <ModalError
+        mostrarModalError={mostrarModalError}
+        setMostrarModalError={setMostrarModalError}
+        mensajeError={mensajeError}
       />
     </Container>
   );

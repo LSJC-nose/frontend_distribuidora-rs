@@ -9,7 +9,7 @@ import autoTable from "jspdf-autotable";
 
 const ComprasPorCliente = ({clientes, cantidades }) => {
   const data = {
-    labels: clientes,
+    labels: clientes, // Asegúrate de que clientes sea un array
     datasets: [
       {
         label: 'Cantidad de Compras por Cliente',
@@ -93,11 +93,32 @@ const generarPDF = () => {
 };
 
   return (
-    <Card>
+    <Card
+    style={{
+      background: "linear-gradient(90deg,rgb(218, 239, 241), rgba(201, 236, 243, 0.8))",
+    }}
+    >
       <Card.Body>
         <Card.Title>Compras por Cliente</Card.Title>
         <Bar ref={chartRef} data={data} options={options} />
-        <Button className="btn btn-primary mt-3" onClick={generarPDF}>
+        <Button className="btn btn-primary mt-3" onClick={generarPDF}
+        style={{
+        background: "linear-gradient(90deg,rgb(193, 143, 206),rgb(28, 118, 136))",
+        border: "none",
+        borderRadius: "50px",
+        fontFamily: "'Montserrat', sans-serif",
+        fontWeight: "600",
+        position: "relative",
+        overflow: "hidden",
+        transition: "all 0.3s ease",
+         }}
+        onMouseEnter={(e) => {
+        e.target.style.boxShadow = "0 0 15px rgba(94, 39, 131, 0.5)";
+         }}
+        onMouseLeave={(e) => {
+        e.target.style.boxShadow = "none";
+         }}               
+         >
         Generar Reporte <i className="bi bi-download"></i>
       </Button>
       </Card.Body>

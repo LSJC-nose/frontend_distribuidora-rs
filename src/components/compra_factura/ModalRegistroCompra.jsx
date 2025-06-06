@@ -1,8 +1,40 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Modal, Form, Button, Table, Row, Col, FormControl } from 'react-bootstrap';
 import AsyncSelect from 'react-select/async';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import ModalError from '../errorModal/ModalError';
+
+const GradientButton = ({ children, onClick, variant, style, width = "100%", ...props }) => (
+  <Button
+    style={{
+      background: "linear-gradient(90deg, rgb(193, 143, 206), rgb(28, 118, 136))",
+      border: "none",
+      borderRadius: "50px",
+      fontFamily: "'Montserrat', sans-serif",
+      fontWeight: "600",
+      position: "relative",
+      overflow: "hidden",
+      transition: "all 0.3s ease",
+      width,
+      padding: "5px 10px",
+      fontSize: "17px",
+      ...style,
+    }}
+    onMouseEnter={(e) => {
+      e.target.style.boxShadow = "0 0 15px rgba(94, 39, 131, 0.5)";
+    }}
+    onMouseLeave施
+    onMouseLeave={(e) => {
+      e.target.style.boxShadow = "none";
+    }}
+    variant={variant}
+    onClick={onClick}
+    {...props}
+  >
+    {children}
+  </Button>
+);
 
 const ModalRegistroCompra = ({
   mostrarModal,
@@ -15,21 +47,29 @@ const ModalRegistroCompra = ({
   agregarCompra,
   errorCarga,
   proveedores,
-  productos
+  productos,
 }) => {
   const [proveedorSeleccionado, setProveedorSeleccionado] = useState(null);
   const [productoSeleccionado, setProductoSeleccionado] = useState(null);
   const [nuevoDetalle, setNuevoDetalle] = useState({ ID_Producto: '', Cantidad: '', PrecioCompra: '' });
+  const [mensajeError, setMensajeError] = useState('');
+  const [mostrarModalError, setMostrarModalError] = useState(false);
 
+  // Calcular total de la compra
   const totalCompra = detallesCompra.reduce((sum, detalle) => sum + (detalle.Cantidad * detalle.PrecioCompra), 0);
+
+  // Actualizar total_compra cuando cambian los detalles
+  useEffect(() => {
+    setNuevaCompra(prev => ({ ...prev, total_compra: totalCompra }));
+  }, [detallesCompra, setNuevaCompra]);
 
   const cargarProveedor = (inputValue, callback) => {
     const filtrados = proveedores.filter(proveedor =>
-      `${proveedor.NombreProveedor} `.toLowerCase().includes(inputValue.toLowerCase())
+      proveedor.NombreProveedor.toLowerCase().includes(inputValue.toLowerCase())
     );
     callback(filtrados.map(proveedor => ({
       value: proveedor.ID_Proveedores,
-      label: `${proveedor.NombreProveedor} `
+      label: proveedor.NombreProveedor,
     })));
   };
 
@@ -40,7 +80,7 @@ const ModalRegistroCompra = ({
     callback(filtrados.map(producto => ({
       value: producto.ID_Producto,
       label: producto.nombreProducto,
-      precio: producto.PrecioCompra
+      precio: producto.PrecioCompra,
     })));
   };
 
@@ -54,7 +94,7 @@ const ModalRegistroCompra = ({
     setNuevoDetalle(prev => ({
       ...prev,
       ID_Producto: seleccionado ? seleccionado.value : '',
-      PrecioCompra: seleccionado ? seleccionado.precio : ''
+      PrecioCompra: seleccionado ? seleccionado.precio : '',
     }));
   };
 
@@ -64,8 +104,9 @@ const ModalRegistroCompra = ({
   };
 
   const manejarAgregarDetalle = () => {
-    if (!nuevoDetalle.ID_Producto || !nuevoDetalle.Cantidad || nuevoDetalle.Cantidad <= 0) {
-      alert('Por favor, selecciona un producto y una cantidad válida.');
+    if (!nuevoDetalle.ID_Producto || !nuevoDetalle.Cantidad || nuevoDetalle.Cantidad <= 0 || !productoSeleccionado) {
+      setMensajeError('Por favor, selecciona un producto y una cantidad válida.');
+      setMostrarModalError(true);
       return;
     }
 
@@ -73,19 +114,33 @@ const ModalRegistroCompra = ({
       ID_Producto: nuevoDetalle.ID_Producto,
       nombreProducto: productoSeleccionado.label,
       Cantidad: parseInt(nuevoDetalle.Cantidad),
-      PrecioCompra: parseFloat(nuevoDetalle.PrecioCompra)
+      PrecioCompra: parseFloat(nuevoDetalle.PrecioCompra),
     });
 
     setNuevoDetalle({ ID_Producto: '', Cantidad: '', PrecioCompra: '' });
     setProductoSeleccionado(null);
   };
 
+  const manejarCrearCompra = () => {
+    if (!nuevaCompra.ID_Proveedores) {
+      setMensajeError('Por favor, selecciona un proveedor.');
+      setMostrarModalError(true);
+      return;
+    }
+    if (detallesCompra.length === 0) {
+      setMensajeError('Debes agregar al menos un detalle de compra.');
+      setMostrarModalError(true);
+      return;
+    }
+    agregarCompra();
+  };
+
   return (
     <Modal show={mostrarModal} onHide={() => setMostrarModal(false)} fullscreen={true}>
-      <Modal.Header closeButton>
-        <Modal.Title>Registrar Nueva Compra</Modal.Title>
+      <Modal.Header style={{ background: '#0d7878', opacity: 0.9 }} closeButton>
+        <Modal.Title style={{ color: '#fff' }}>Registrar Nueva Compra</Modal.Title>
       </Modal.Header>
-      <Modal.Body>
+      <Modal.Body style={{ background: '#f0f7f7', opacity: 0.9 }}>
         <Form>
           <Row>
             <Col xs={12} sm={12} md={6} lg={6}>
@@ -107,7 +162,7 @@ const ModalRegistroCompra = ({
                 <Form.Label>Fecha de Compra</Form.Label>
                 <br />
                 <DatePicker
-                  selected={nuevaCompra.fecha_compra}
+                  selected={nuevaCompra.fecha_compra instanceof Date ? nuevaCompra.fecha_compra : new Date()}
                   onChange={(date) => setNuevaCompra(prev => ({ ...prev, fecha_compra: date }))}
                   className="form-control"
                   dateFormat="dd/MM/yyyy HH:mm"
@@ -164,15 +219,15 @@ const ModalRegistroCompra = ({
               </Form.Group>
             </Col>
             <Col xs={5} sm={4} md={2} lg={2} className="d-flex align-items-center mt-3">
-              <Button style={{ width: '100%' }} variant="success" onClick={manejarAgregarDetalle}>
+              <GradientButton variant="success" onClick={manejarAgregarDetalle}>
                 Agregar Producto
-              </Button>
+              </GradientButton>
             </Col>
           </Row>
           {detallesCompra.length > 0 && (
             <>
               <h5 className="mt-4">Detalles Agregados</h5>
-              <Table striped bordered hover>
+              <Table className="table-striped table-primary" striped bordered hover>
                 <thead>
                   <tr>
                     <th>Producto</th>
@@ -193,23 +248,32 @@ const ModalRegistroCompra = ({
                 </tbody>
                 <tfoot>
                   <tr>
-                    <td colSpan="3" className="text-end"><strong>Total:</strong></td>
-                    <td><strong>{totalCompra.toFixed(2)}</strong></td>
+                    <td colSpan="3" className="text-end">
+                      <strong>Total:</strong>
+                    </td>
+                    <td>
+                      <strong>{totalCompra.toFixed(2)}</strong>
+                    </td>
                   </tr>
                 </tfoot>
               </Table>
             </>
           )}
+          <ModalError
+            mostrarModalError={mostrarModalError}
+            setMostrarModalError={setMostrarModalError}
+            mensajeError={mensajeError}
+          />
           {errorCarga && <div className="text-danger mt-2">{errorCarga}</div>}
         </Form>
       </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={() => setMostrarModal(false)}>
+      <Modal.Footer style={{ background: '#c7d7f0' }}>
+        <GradientButton variant="secondary" width="13%" onClick={() => setMostrarModal(false)}>
           Cancelar
-        </Button>
-        <Button variant="primary" onClick={agregarCompra}>
+        </GradientButton>
+        <GradientButton variant="primary" width="13%" onClick={manejarCrearCompra}>
           Crear Compra
-        </Button>
+        </GradientButton>
       </Modal.Footer>
     </Modal>
   );

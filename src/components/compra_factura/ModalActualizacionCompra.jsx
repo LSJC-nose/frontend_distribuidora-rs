@@ -1,8 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Modal, Form, Button, Table, Row, Col, FormControl } from 'react-bootstrap';
 import AsyncSelect from 'react-select/async';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import ModalError from '../errorModal/ModalError';
+
+const GradientButton = ({ children, onClick, variant, style, width = "100%", ...props }) => (
+  <Button
+    style={{
+      background: "linear-gradient(90deg, rgb(193, 143, 206), rgb(28, 118, 136))",
+      border: "none",
+      borderRadius: "50px",
+      fontFamily: "'Montserrat', sans-serif",
+      fontWeight: "600",
+      position: "relative",
+      overflow: "hidden",
+      transition: "all 0.3s ease",
+      width,
+      padding: "5px 10px",
+      fontSize: "17px",
+      ...style,
+    }}
+    onMouseEnter={(e) => {
+      e.target.style.boxShadow = "0 0 15px rgba(94, 39, 131, 0.5)";
+    }}
+    onMouseLeave={(e) => {
+      e.target.style.boxShadow = "none";
+    }}
+    variant={variant}
+    onClick={onClick}
+    {...props}
+  >
+    {children}
+  </Button>
+);
 
 const ModalActualizacionCompra = ({
   mostrarModal,
@@ -13,40 +44,51 @@ const ModalActualizacionCompra = ({
   actualizarCompra,
   errorCarga,
   proveedores,
-  productos
+  productos,
 }) => {
   const [compraActualizada, setCompraActualizada] = useState({
     ID_CompraFactura: compra?.ID_CompraFactura || '',
     ID_Proveedores: compra?.ID_Proveedores || '',
     fecha_compra: compra?.fecha_compra ? new Date(compra.fecha_compra) : new Date(),
-    total_compra: compra?.total_compra || 0
+    total_compra: compra?.total_compra || 0,
   });
+  const [mensajeError, setMensajeError] = useState('');
+  const [mostrarModalError, setMostrarModalError] = useState(false);
   const [proveedorSeleccionado, setProveedorSeleccionado] = useState(null);
   const [productoSeleccionado, setProductoSeleccionado] = useState(null);
   const [nuevoDetalle, setNuevoDetalle] = useState({ ID_Producto: '', Cantidad: '', PrecioCompra: '' });
   const [editandoDetalle, setEditandoDetalle] = useState(null);
 
+  // Calcular total de la compra
   const totalCompra = detallesCompra.reduce((sum, detalle) => sum + (detalle.Cantidad * detalle.PrecioCompra), 0);
 
+  // Actualizar total_compra cuando cambian los detalles
+  useEffect(() => {
+    setCompraActualizada(prev => ({ ...prev, total_compra: totalCompra }));
+  }, [detallesCompra]);
+
+  // Inicializar proveedor seleccionado
   useEffect(() => {
     if (compra && proveedores.length > 0) {
-      setProveedorSeleccionado({ value: compra.ID_Proveedores, label: compra.NombreProveedor });
+      const proveedor = proveedores.find(p => p.ID_Proveedores === parseInt(compra.ID_Proveedores));
+      setProveedorSeleccionado(proveedor ? { value: proveedor.ID_Proveedores, label: proveedor.NombreProveedor } : null);
       setCompraActualizada({
         ID_CompraFactura: compra.ID_CompraFactura || '',
         ID_Proveedores: compra.ID_Proveedores || '',
         fecha_compra: compra?.fecha_compra ? new Date(compra.fecha_compra) : new Date(),
-        total_compra: parseFloat(compra.total_compra) || 0
+        total_compra: parseFloat(compra.total_compra) || 0,
       });
     }
   }, [compra, proveedores]);
 
+  // Cargar opciones para AsyncSelect
   const cargarProveedor = (inputValue, callback) => {
     const filtrados = proveedores.filter(proveedor =>
       `${proveedor.NombreProveedor}`.toLowerCase().includes(inputValue.toLowerCase())
     );
     callback(filtrados.map(proveedor => ({
       value: proveedor.ID_Proveedores,
-      label: `${proveedor.NombreProveedor} `
+      label: proveedor.NombreProveedor,
     })));
   };
 
@@ -57,10 +99,11 @@ const ModalActualizacionCompra = ({
     callback(filtrados.map(producto => ({
       value: producto.ID_Producto,
       label: producto.nombreProducto,
-      precio: producto.PrecioCompra
+      precio: producto.PrecioCompra,
     })));
   };
 
+  // Manejar cambios en los selectores
   const manejarCambioProveedor = (seleccionado) => {
     setProveedorSeleccionado(seleccionado);
     setCompraActualizada(prev => ({ ...prev, ID_Proveedores: seleccionado ? seleccionado.value : '' }));
@@ -71,42 +114,42 @@ const ModalActualizacionCompra = ({
     setNuevoDetalle(prev => ({
       ...prev,
       ID_Producto: seleccionado ? seleccionado.value : '',
-      PrecioCompra: seleccionado ? seleccionado.precio : ''
+      PrecioCompra: seleccionado ? seleccionado.precio : '',
     }));
   };
 
+  // Manejar cambios en el detalle
   const manejarCambioDetalle = (e) => {
     const { name, value } = e.target;
     setNuevoDetalle(prev => ({ ...prev, [name]: value }));
   };
 
+  // Agregar detalle a la lista
   const manejarAgregarDetalle = () => {
-    if (!nuevoDetalle.ID_Producto || !nuevoDetalle.Cantidad || nuevoDetalle.Cantidad <= 0) {
-      alert('Por favor, selecciona un producto y una cantidad válida.');
+    if (!nuevoDetalle.ID_Producto || !nuevoDetalle.Cantidad || nuevoDetalle.Cantidad <= 0 || !productoSeleccionado) {
+      setMensajeError('Por favor, selecciona un producto y una cantidad válida.');
+      setMostrarModalError(true);
       return;
     }
 
     setDetallesCompra(prev => {
-      // Verificar si el producto ya existe en los detalles
       const existe = prev.find(detalle => detalle.ID_Producto === nuevoDetalle.ID_Producto);
       if (existe) {
-        // Si existe, actualizar la cantidad
         return prev.map(detalle =>
           detalle.ID_Producto === nuevoDetalle.ID_Producto
             ? {
                 ...detalle,
                 Cantidad: detalle.Cantidad + parseInt(nuevoDetalle.Cantidad),
-                PrecioCompra: parseFloat(nuevoDetalle.PrecioCompra) // Actualiza el precio si cambia
+                PrecioCompra: parseFloat(nuevoDetalle.PrecioCompra),
               }
             : detalle
         );
       }
-      // Si no existe, agregar un nuevo detalle
       return [...prev, {
         ID_Producto: nuevoDetalle.ID_Producto,
         nombreProducto: productoSeleccionado.label,
         Cantidad: parseInt(nuevoDetalle.Cantidad),
-        PrecioCompra: parseFloat(nuevoDetalle.PrecioCompra)
+        PrecioCompra: parseFloat(nuevoDetalle.PrecioCompra),
       }];
     });
 
@@ -114,28 +157,32 @@ const ModalActualizacionCompra = ({
     setProductoSeleccionado(null);
   };
 
+  // Eliminar detalle
   const eliminarDetalle = (index) => {
     setDetallesCompra(prev => prev.filter((_, i) => i !== index));
   };
 
+  // Iniciar edición de detalle
   const iniciarEdicionDetalle = (index, detalle) => {
     setEditandoDetalle({ index, detalle });
     setNuevoDetalle({
       ID_Producto: detalle.ID_Producto,
       Cantidad: detalle.Cantidad.toString(),
-      PrecioCompra: detalle.PrecioCompra.toString()
+      PrecioCompra: detalle.PrecioCompra.toString(),
     });
     setProductoSeleccionado({
       value: detalle.ID_Producto,
       label: detalle.nombreProducto,
-      precio: detalle.PrecioCompra
+      precio: detalle.PrecioCompra,
     });
   };
 
+  // Guardar edición de detalle
   const guardarEdicionDetalle = () => {
     if (!editandoDetalle) return;
-    if (!nuevoDetalle.ID_Producto || !nuevoDetalle.Cantidad || nuevoDetalle.Cantidad <= 0) {
-      alert('Por favor, selecciona un producto y una cantidad válida.');
+    if (!nuevoDetalle.ID_Producto || !nuevoDetalle.Cantidad || nuevoDetalle.Cantidad <= 0 || !productoSeleccionado) {
+      setMensajeError('Por favor, selecciona un producto y una cantidad válida.');
+      setMostrarModalError(true);
       return;
     }
     const nuevosDetalles = [...detallesCompra];
@@ -143,7 +190,7 @@ const ModalActualizacionCompra = ({
       ID_Producto: nuevoDetalle.ID_Producto,
       nombreProducto: productoSeleccionado.label,
       Cantidad: parseInt(nuevoDetalle.Cantidad),
-      PrecioCompra: parseFloat(nuevoDetalle.PrecioCompra)
+      PrecioCompra: parseFloat(nuevoDetalle.PrecioCompra),
     };
     setDetallesCompra(nuevosDetalles);
     setEditandoDetalle(null);
@@ -151,17 +198,36 @@ const ModalActualizacionCompra = ({
     setProductoSeleccionado(null);
   };
 
+  // Validar antes de actualizar la compra
+  const manejarActualizarCompra = () => {
+    if (!compraActualizada.ID_Proveedores) {
+      setMensajeError('Por favor, selecciona un proveedor.');
+      setMostrarModalError(true);
+      return;
+    }
+    if (detallesCompra.length === 0) {
+      setMensajeError('Debes agregar al menos un detalle de compra.');
+      setMostrarModalError(true);
+      return;
+    }
+    actualizarCompra(compraActualizada, detallesCompra);
+  };
+
   return (
-    <Modal show={mostrarModal} onHide={() => {
-      setMostrarModal(false);
-      setNuevoDetalle({ ID_Producto: '', Cantidad: '', PrecioCompra: '' });
-      setProductoSeleccionado(null);
-      setEditandoDetalle(null);
-    }} fullscreen={true}>
-      <Modal.Header closeButton>
-        <Modal.Title>Actualizar Compra</Modal.Title>
+    <Modal
+      show={mostrarModal}
+      onHide={() => {
+        setMostrarModal(false);
+        setNuevoDetalle({ ID_Producto: '', Cantidad: '', PrecioCompra: '' });
+        setProductoSeleccionado(null);
+        setEditandoDetalle(null);
+      }}
+      fullscreen={true}
+    >
+      <Modal.Header style={{ background: '#0d7878', opacity: 0.9 }} closeButton>
+        <Modal.Title style={{ color: '#fff' }}>Actualizar Compra</Modal.Title>
       </Modal.Header>
-      <Modal.Body>
+      <Modal.Body style={{ background: '#f0f7f7', opacity: 0.9 }}>
         <Form>
           <Row>
             <Col xs={12} sm={12} md={6} lg={6}>
@@ -183,7 +249,7 @@ const ModalActualizacionCompra = ({
                 <Form.Label>Fecha de Compra</Form.Label>
                 <br />
                 <DatePicker
-                  selected={compraActualizada.fecha_compra}
+                  selected={compraActualizada.fecha_compra instanceof Date ? compraActualizada.fecha_compra : new Date()}
                   onChange={(date) => setCompraActualizada(prev => ({ ...prev, fecha_compra: date }))}
                   className="form-control"
                   dateFormat="dd/MM/yyyy HH:mm"
@@ -242,20 +308,20 @@ const ModalActualizacionCompra = ({
             </Col>
             <Col xs={5} sm={4} md={2} lg={2} className="d-flex align-items-center mt-3">
               {editandoDetalle ? (
-                <Button style={{ width: '100%' }} variant="primary" onClick={guardarEdicionDetalle}>
+                <GradientButton variant="primary" onClick={guardarEdicionDetalle}>
                   Guardar Cambios
-                </Button>
+                </GradientButton>
               ) : (
-                <Button style={{ width: '100%' }} variant="success" onClick={manejarAgregarDetalle}>
+                <GradientButton variant="success" onClick={manejarAgregarDetalle}>
                   Agregar Producto
-                </Button>
+                </GradientButton>
               )}
             </Col>
           </Row>
           {detallesCompra.length > 0 && (
             <>
               <h5 className="mt-4">Detalles Agregados</h5>
-              <Table striped bordered hover>
+              <Table className="table-striped table-primary" striped bordered hover>
                 <thead>
                   <tr>
                     <th>Producto</th>
@@ -273,11 +339,15 @@ const ModalActualizacionCompra = ({
                       <td>{detalle.PrecioCompra.toFixed(2)}</td>
                       <td>{(detalle.Cantidad * detalle.PrecioCompra).toFixed(2)}</td>
                       <td>
-                        <Button variant="warning" size="sm" onClick={() => iniciarEdicionDetalle(index, detalle)} className="me-2">
-                          Editar
+                        <Button
+                        className='mt-2'
+                        variant="warning" size="sm" onClick={() => iniciarEdicionDetalle(index, detalle)}>
+                          <i className="bi bi-pencil"></i>
                         </Button>
-                        <Button variant="danger" size="sm" onClick={() => eliminarDetalle(index)}>
-                          Eliminar
+                        <Button
+                         className='mt-2'
+                        variant="danger" size="sm" onClick={() => eliminarDetalle(index)}>
+                          <i className="bi bi-trash3"></i>
                         </Button>
                       </td>
                     </tr>
@@ -285,26 +355,78 @@ const ModalActualizacionCompra = ({
                 </tbody>
                 <tfoot>
                   <tr>
-                    <td colSpan="4" className="text-end"><strong>Total:</strong></td>
-                    <td><strong>{totalCompra.toFixed(2)}</strong></td>
+                    <td colSpan="4" className="text-end">
+                      <strong>Total:</strong>
+                    </td>
+                    <td>
+                      <strong>{totalCompra.toFixed(2)}</strong>
+                    </td>
                   </tr>
                 </tfoot>
               </Table>
             </>
           )}
+          <ModalError
+            mostrarModalError={mostrarModalError}
+            setMostrarModalError={setMostrarModalError}
+            mensajeError={mensajeError}
+          />
           {errorCarga && <div className="text-danger mt-2">{errorCarga}</div>}
         </Form>
       </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={() => {
-          setMostrarModal(false);
-          setNuevoDetalle({ ID_Producto: '', Cantidad: '', PrecioCompra: '' });
-          setProductoSeleccionado(null);
-          setEditandoDetalle(null);
-        }}>
+      <Modal.Footer style={{ background: '#c7d7f0' }}>
+        <Button
+         style={{
+      background: "linear-gradient(90deg, rgb(193, 143, 206), rgb(28, 118, 136))",
+      border: "none",
+      borderRadius: "50px",
+      fontFamily: "'Montserrat', sans-serif",
+      fontWeight: "600",
+      position: "relative",
+      overflow: "hidden",
+      transition: "all 0.3s ease",
+      padding: "5px 10px",
+      fontSize: "17px"
+    
+    }}
+    onMouseEnter={(e) => {
+      e.target.style.boxShadow = "0 0 15px rgba(94, 39, 131, 0.5)";
+    }}
+    onMouseLeave={(e) => {
+      e.target.style.boxShadow = "none";
+    }}
+          variant="secondary"
+          width="13%"
+          onClick={() => {
+            setMostrarModal(false);
+            setNuevoDetalle({ ID_Producto: '', Cantidad: '', PrecioCompra: '' });
+            setProductoSeleccionado(null);
+            setEditandoDetalle(null);
+          }}
+        >
           Cancelar
         </Button>
-        <Button variant="primary" onClick={() => actualizarCompra(compraActualizada, detallesCompra)}>
+        <Button 
+         style={{
+      background: "linear-gradient(90deg, rgb(193, 143, 206), rgb(28, 118, 136))",
+      border: "none",
+      borderRadius: "50px",
+      fontFamily: "'Montserrat', sans-serif",
+      fontWeight: "600",
+      position: "relative",
+      overflow: "hidden",
+      transition: "all 0.3s ease",
+      padding: "5px 10px",
+      fontSize: "17px"
+      
+    }}
+    onMouseEnter={(e) => {
+      e.target.style.boxShadow = "0 0 15px rgba(94, 39, 131, 0.5)";
+    }}
+    onMouseLeave={(e) => {
+      e.target.style.boxShadow = "none";
+    }}
+        variant="primary" width="13%" onClick={manejarActualizarCompra}>
           Actualizar Compra
         </Button>
       </Modal.Footer>

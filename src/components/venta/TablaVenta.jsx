@@ -42,6 +42,7 @@ const TablaVentas = ({ obtenerDetalles, ventas, cargando, error,
             <td>C$ {venta.subtotal.toFixed(2)}</td>
             <td>
               <Button
+              className='me-2'
                 variant="outline-success"
                 size="sm"
                 onClick={() => obtenerDetalles(venta.id_venta)}
@@ -50,6 +51,7 @@ const TablaVentas = ({ obtenerDetalles, ventas, cargando, error,
               </Button>
 
               <Button
+              className='me-2'
                 variant="outline-danger"
                 size="sm"
                 onClick={() => abrirModalEliminacion(venta)}
