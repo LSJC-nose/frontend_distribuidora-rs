@@ -59,10 +59,10 @@ const Estadisticas = () => {
         setCantidades([]);
         setError(prev => prev ? `${prev}; No hay datos de compras por cliente` : 'No hay datos de compras por cliente');
       } else {
-        const valid = array.every(item => item.nombre && item.apellido && item.compras != null);
+        const valid = array.every(item => item.Nombre && item.Apellido && item.Compras != null);
         if (!valid) throw new Error('Estructura inesperada en compras por cliente');
-        setClientes(array.map(item => `${item.nombre} ${item.apellido}`));
-        setCantidades(array.map(item => Number(item.compras) || 0));
+        setClientes(array.map(item => `${item.Nombre} ${item.Apellido}`));
+        setCantidades(array.map(item => Number(item.Compras) || 0));
       }
     } catch (err) {
       console.error(err);

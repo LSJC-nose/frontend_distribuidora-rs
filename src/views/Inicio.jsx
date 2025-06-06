@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Container } from "react-bootstrap";
-import logo from "/logo_RS-.png"; // Importación del logo de la ferretería  
+import { Container, Image } from "react-bootstrap";
+import Portada from "../assets/logo_RS-.png"; // Importación del logo de la ferretería  
+import Proposito from "../components/inicio/Proposito.jsx"; // Importación del componente Proposito
+
 
 const Inicio = () => {
   const [nombreUsuario, setNombreUsuario] = useState("");
@@ -24,15 +26,11 @@ const Inicio = () => {
 
   return (
    
-    <Container className="d-flex flex-column align-items-center justify-content-center vh-100">
-      <img alt="" src={logo} width="240" height="auto" className="d-inline-block align-top"
-                                 />  
-    <h1 className="text-dark">¡Bienvenido, {nombreUsuario}!</h1>
-    <h6 className="text-dark">Sea bienvenido a nuestra pagina</h6>
-    <p className="text-dark">Desea salir de nuestro sitio</p>
-    <button className="btns" onClick={cerrarSesion}>Cerrar Sesión</button>
-  </Container>
-  
+   <Container>
+<h1 className="text-center m-4">¡Bienvenido, {nombreUsuario}!</h1>
+<Image className="portada-imagen" src={Portada} fluid rounded/>
+<Proposito />
+</Container>
     
   );
 };

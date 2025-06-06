@@ -163,3 +163,12 @@ body{
     }
 
 }
+
+
+.portada-imagen {
+  display: block;
+  margin: 0 auto;
+  width: 30%;
+  height: auto;
+  border-radius: 0.5rem;
+}

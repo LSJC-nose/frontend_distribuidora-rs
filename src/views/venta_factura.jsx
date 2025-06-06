@@ -262,7 +262,8 @@
       <>
       
         <Container className="mt-5" >
-    <p>.</p>
+    
+    <h3>Ventas con detalle </h3>
           <Row>
       <Col lg={2} md={4} sm={4} xs={5}>
         <Button className='bi bi-bag-plus-fill' variant="secondary" onClick={() =>
