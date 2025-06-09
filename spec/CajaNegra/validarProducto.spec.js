@@ -4,10 +4,10 @@ console.log('Prueba 1: El producto no se registra con campos vacíos');
 describe("Validación de producto", () => {
   it("No permite guardar con campos vacíos", () => {
     const producto = {
-      nombre_producto: '',
-      id_categoria: '',
-      precio_unitario: '',
-      stock: ''
+      nombreProducto: '',
+      Descripcion: '',
+      PrecioVenta: '',
+      PrecioCompra: ''
     };
 
     const resultado = validarProducto(producto);
@@ -57,4 +57,3 @@ console.log('Prueba 4: Producto registrado correctamente');
     expect(resultado.valido).toBeTrue();
   });
 });
-    
