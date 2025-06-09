@@ -15,42 +15,42 @@ describe("Validación de producto", () => {
     expect(resultado.mensaje).toContain("campos requeridos");
   }); 
 
-console.log('Prueba 2: El precio del producto no puede ser negativo');
-  it("Debe rechazar precio negativo", () => {
+console.log('Prueba 2: El precio venta del producto no puede ser negativo');
+  it("Debe rechazar precio venta negativo", () => {
     const producto = {
-      nombre_producto: 'Martillo',
-      id_categoria: '1',
-      precio_unitario: -10,
-      stock: 5
+      nombreProducto: 'Manzana',
+      Descripcion: 'Manzana roja',
+      PrecioVenta: -10,
+      PrecioCompra: 10
     };
 
     const resultado = validarProducto(producto);
     expect(resultado.valido).toBeFalse();
-    expect(resultado.mensaje).toContain("precio");
+    expect(resultado.mensaje).toContain("precio venta");
   });
 
-console.log('Prueba 3: El stock debe ser mayor a 0 para guardar el producto');
-  it("No permite stock menor que cero", () => {
+console.log('Prueba 3: El Precio Compra del producto no puede ser negativo');
+  it("Debe rechazar precio compra negativo", () => {
     const producto = {
-      nombre_producto: 'Martillo',
-      id_categoria: '1',
-      precio_unitario: 10,
-      stock: -5
+       nombreProducto: 'Manzana',
+      Descripcion: 'Manzana roja',
+      PrecioVenta: 10,
+      PrecioCompra: -10
     };
 
     const resultado = validarProducto(producto);
     expect(resultado.valido).toBeFalse();
-    expect(resultado.mensaje).toContain("stock");
+    expect(resultado.mensaje).toContain("precio compra");
     /*expect(resultado.mensaje).toBe("El stock debe ser número positivo");*/
   });
 
 console.log('Prueba 4: Producto registrado correctamente');
   it("Agregar producto correctamente", () => {
     const producto = {
-      nombre_producto: 'Martillo',
-      id_categoria: '1',
-      precio_unitario: 10,
-      stock: 5
+      nombreProducto: 'Manzana',
+      Descripcion: 'Manzana roja',
+      PrecioVenta: 10,
+      PrecioCompra: 10
     };
 
     const resultado = validarProducto(producto);

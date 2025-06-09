@@ -1,16 +1,16 @@
 function validarProducto(producto) {
-  const { nombre_producto, id_categoria, precio_unitario, stock } = producto;
+  const { nombreProducto, Descripcion, PrecioVenta, PrecioCompra } = producto;
 
-  if (!nombre_producto || !id_categoria || precio_unitario === '' || stock === '') {
+  if (!nombreProducto || !Descripcion || PrecioVenta === '' || PrecioCompra === '') {
     return { valido: false, mensaje: "Completa todos los campos requeridos." };
   }
 
-  if (isNaN(precio_unitario) || Number(precio_unitario) < 0) {
-    return { valido: false, mensaje: "El precio debe ser un número positivo." };
+  if (isNaN(PrecioVenta) || Number(PrecioVenta) < 0) {
+    return { valido: false, mensaje: "El precio de venta debe ser un número positivo." };
   }
 
-  if (isNaN(stock) || Number(stock) < 0) {
-    return { valido: false, mensaje: "El stock debe ser un número positivo." };
+  if (isNaN(PrecioCompra) || Number(PrecioCompra) < 0) {
+    return { valido: false, mensaje: "El precio de compra debe ser un número positivo." };
   }
 
   return { valido: true };

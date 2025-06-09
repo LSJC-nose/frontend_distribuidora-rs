@@ -12,10 +12,10 @@ npm i react-awesome-reveal
 npm install --save-dev jasmine
 npx jasmine init
 npm test
-npx jasmine init
 npx nyc npx Jasmine
 npx nyc report --reporter=html
 npm run coverage
+npm install --save-dev nyc
 npm run test:producto
 
 
