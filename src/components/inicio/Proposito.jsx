@@ -14,21 +14,21 @@ const Proposito = () => {
         <Col sm={12} lg={4} className="text-center">
           <i className="bi bi-bullseye" style={{ fontSize: "2rem", color: "#dc3545" }}></i>
           <h5>Objetivos</h5>
-          <p>Promover en Ferretería Selva el uso de herramientas y materiales de calidad, destacar la importancia de los productos locales y fomentar prácticas sostenibles en la construcción y mantenimiento.</p>
+          <p>Desarrollar una estrategia de inteligencia de negocio en la microempresa Rivas  Suarez, para la gestión de productos del inventario.</p>
         </Col>
 
         {/* Misión */}
         <Col sm={12} lg={4} className="text-center">
           <i className="bi bi-flag-fill" style={{ fontSize: "2rem", color: "#0d6efd" }}></i>
           <h5>Misión</h5>
-          <p>Ofrecer y promover en Ferretería Selva soluciones integrales de ferretería en Chontales, brindando productos de calidad que inspiren confianza y satisfacción en cada proyecto.</p>
+          <p>Brindar productos de calidad a precios accesibles, facilitando el abastecimiento de pequeños comercios y clientes individuales mediante una gestión eficiente y confiable del inventario.</p>
         </Col>
 
         {/* Visión */}
         <Col sm={12} lg={4} className="text-center">
           <i className="bi bi-eye-fill" style={{ fontSize: "2rem", color: "#198754" }}></i>
           <h5>Visión</h5>
-          <p>Ser en Ferretería Selva el principal referente en ferretería en Chontales, inspirando a nuestros clientes a construir y mantener sus espacios con productos confiables y duraderos.</p>
+          <p>Ser una distribuidora líder , reconocida por su innovación, servicio personalizado y capacidad de adaptación a las necesidades del mercado, impulsando el crecimiento de nuestros clientes en cada temporada.</p>
         </Col>
 
       </Row>

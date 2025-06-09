@@ -267,7 +267,7 @@
     return (
       <>
       
-        <Container className="mt-5" >
+        <Container responsive className="table-striped table-primary" >
     
     <h3>Ventas con detalle </h3>
           <Row>

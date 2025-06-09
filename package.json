@@ -7,7 +7,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "te0st:producto": "nyc jasmine **/CajaNegra/validarProducto.spec.js"
+    "test:producto": "nyc jasmine **/CajaNegra/validarProducto.spec.js"
   },
   "dependencies": {
     "bootstrap": "^5.3.6",
