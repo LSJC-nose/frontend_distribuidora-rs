@@ -19,10 +19,6 @@ const ModalError = ({ mostrarModalError, setMostrarModalError, mensajeError }) =
         <Modal.Title style={{ fontSize: "1.2rem" }}>Error</Modal.Title>
       </Modal.Header>
       <Modal.Body
-        style={{
-          padding: "0.75rem",
-          //fontSize: "0.9rem",
-        }}
       >
         <p>{mensajeError}</p>
       </Modal.Body>

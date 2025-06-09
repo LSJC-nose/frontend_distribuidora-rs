@@ -4,7 +4,7 @@ import { Container, Button, Row, Col } from 'react-bootstrap';
 import ModalRegistroProducto from '../components/producto/ModalRegistroProducto';
 import ModalEdicionProducto from '../components/producto/ModalEdicionProducto';
 import ModalEliminacionProducto from '../components/producto/ModalEliminacionProducto';
-import ModalError from '../components/errorModal/ModalError'; // Import the new modal
+import ModalError from '../components/errorModal/ModalError';
 import Paginacion from '../components/ordenamiento/Paginacion';
 import CuadroBusquedas from '../components/busquedas/CuadroBusquedas';
 import jsPDF from 'jspdf';
@@ -23,8 +23,8 @@ const Producto = () => {
   const [mostrarModalEdicion, setMostrarModalEdicion] = useState(false);
   const [productoAEliminar, setProductoAEliminar] = useState(null);
   const [mostrarModalEliminacion, setMostrarModalEliminacion] = useState(false);
-  const [mostrarModalError, setMostrarModalError] = useState(false); // New state for error modal
-  const [mensajeError, setMensajeError] = useState(''); // New state for error message
+  const [mostrarModalError, setMostrarModalError] = useState(false);
+  const [mensajeError, setMensajeError] = useState('');
   const [nuevoProducto, setNuevoProducto] = useState({
     nombreProducto: '',
     Descripcion: '',
@@ -221,7 +221,6 @@ const Producto = () => {
       !nuevoProducto.Stock ||
       !nuevoProducto.ID_Categoria
     ) {
-      
       setMensajeError('Por favor, completa todos los campos antes de guardar.');
       setMostrarModalError(true);
       return;
@@ -308,7 +307,32 @@ const Producto = () => {
         throw new Error('Error al actualizar el producto');
       }
 
-      await obtenerProducto();
+      // Actualizar localmente la lista de productos
+      const updatedProductos = listaProducto.map((prod) =>
+        prod.ID_Producto === productoEditado.ID_Producto ? productoEditado : prod
+      );
+      setListaProducto(updatedProductos);
+
+      // Actualizar productos filtrados con el mismo criterio de búsqueda
+      const filtradas = updatedProductos.filter(
+        (producto) =>
+          producto.nombreProducto.toLowerCase().includes(textoBusqueda.toLowerCase()) ||
+          producto.Descripcion.toLowerCase().includes(textoBusqueda.toLowerCase()) ||
+          producto.PrecioCompra.toString().includes(textoBusqueda) ||
+          producto.PrecioVenta.toString().includes(textoBusqueda)
+      );
+      setProductosFiltrados(filtradas);
+
+      // Calcular la nueva página del producto actualizado
+      const index = filtradas.findIndex((prod) => prod.ID_Producto === productoEditado.ID_Producto);
+      if (index !== -1) {
+        const newPage = Math.ceil((index + 1) / elementosPorPagina);
+        establecerPaginaActual(newPage);
+      } else {
+        // Si el producto ya no coincide con el filtro, volver a la primera página
+        establecerPaginaActual(1);
+      }
+
       setMostrarModalEdicion(false);
       setProductoEditado(null);
       setErrorCarga(null);

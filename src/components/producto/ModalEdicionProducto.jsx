@@ -104,7 +104,6 @@ const ModalEdicionProducto = ({
                   value={productoEditado?.Stock || ""}
                   onChange={manejarCambioInputEdicion}
                   placeholder="Stock"
-                  onKeyPress={validarNumeros}
                   required
                 />
               </Form.Group>

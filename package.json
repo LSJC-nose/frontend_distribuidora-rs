@@ -2,12 +2,13 @@
   "name": "frontend",
   "private": true,
   "version": "0.0.0",
-  "type": "module",
+ 
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:producto": "nyc jasmine **/CajaNegra/validarProducto.spec.js"
   },
   "dependencies": {
     "bootstrap": "^5.3.6",
@@ -37,6 +38,16 @@
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^15.15.0",
+    "jasmine": "^5.8.0",
     "vite": "^6.3.5"
-  }
+
+   },
+  "nyc": {
+  "reporter": ["text"],
+  "report-dir": "./coverage",
+  "exclude": ["src/**/*.js"],
+  "include": ["**/CajaNegra/validarProducto.spec.js"],
+  "all": true,
+  "check-coverage": false
 }
+} 
