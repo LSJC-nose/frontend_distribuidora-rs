@@ -7,7 +7,9 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test:producto": "nyc jasmine **/CajaNegra/validarProducto.spec.js"
+    "test:producto": "nyc jasmine **/CajaNegra/validarProducto.spec.js",
+    "test:login": "nyc jasmine **/CajaNegra/Validarlogin.spec.js",
+    "test:compra": "nyc jasmine **/CajaBlanca/ValidarcompraCliente.spec.js"
   },
   "dependencies": {
     "bootstrap": "^5.3.6",
@@ -50,9 +52,11 @@
       "src/**/*.js"
     ],
     "include": [
-      "**/CajaNegra/validarProducto.spec.js"
+      "**/CajaNegra/validarProducto.spec.js",
+      "**/CajaNegra/Validarlogin.spec.js",
+      "**/CajaBlanca/ValidarcompraCliente.spec.js"
     ],
-    "all": true,
-    "check-coverage": false
-  }
+  "all": false,
+  "check-coverage": false
+}
 }
