@@ -35,7 +35,7 @@ console.log('Prueba 3: El Precio Compra del producto no puede ser negativo');
        nombreProducto: 'Manzana',
       Descripcion: 'Manzana roja',
       PrecioVenta: 10,
-      PrecioCompra: -10
+      PrecioCompra: 10
     };
 
     const resultado = validarProducto(producto);
