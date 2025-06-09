@@ -7,7 +7,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test:producto": "nyc jasmine **/CajaNegra/validarProducto.spec.js"
+    "test:producto": "nyc jasmine **/CajaNegra/validarProducto.spec.js",
+    "test:agregarcliente": "nyc jasmine **/CajaNegra/Validaragregarcliente.spec.js"
   },
   "dependencies": {
     "bootstrap": "^5.3.6",
@@ -15,7 +16,7 @@
     "chart.js": "^4.4.9",
     "file-saver": "^2.0.5",
     "frontend": "file:",
-    "jspdf": "^3.0.1",
+    "jspdf": "^3.0.1",  
     "jspdf-autotable": "^5.0.2",
     "react": "^19.0.0",
     "react-awesome-reveal": "^4.3.1",
@@ -50,9 +51,13 @@
       "src/**/*.js"
     ],
     "include": [
-      "**/CajaNegra/validarProducto.spec.js"
+      "**/CajaNegra/Validaragregarcliente.spec.js",
+      "**/CajaNegra/Validaragregarcliente.spec.js"
     ],
+   
     "all": true,
     "check-coverage": false
   }
+
+  
 }
