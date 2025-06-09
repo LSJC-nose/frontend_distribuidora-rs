@@ -52,12 +52,10 @@
     ],
     "include": [
       "**/CajaNegra/Validaragregarcliente.spec.js",
-      "**/CajaNegra/Validaragregarcliente.spec.js"
+       "**/CajaNegra/Validaragregarcliente.spec.js"
     ],
    
     "all": true,
     "check-coverage": false
   }
-
-  
 }
