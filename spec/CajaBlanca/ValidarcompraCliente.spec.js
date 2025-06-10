@@ -1,57 +1,53 @@
 const compracliente = require('../../src/ValidacionesCN/compracliente.js');
 
-console.log('Prueba 1: Compra cliente con datos inválidos');
-describe("Validar Compra Cliente - Datos Inválidos", () => {
-  it("Agregar un registro de compra por un cliente con datos inválidos", () => {
-    const compraCliente = {
-      cantidad: 0, // Valor inválido para provocar fallo
-      precioVenta: 120
-    };
-
+describe("Validar Compra Cliente", () => {
+  console.log("Test 1 - Cantidad 0:");
+  it("Debe rechazar cantidad igual a 0", () => {
+    const compraCliente = { cantidad: 0, precioVenta: 120 };
     const resultado = compracliente(compraCliente);
+    
     expect(resultado.valido).toBe(false);
-    expect(resultado.mensaje).toContain("Agrega compra cliente");
+    expect(resultado.mensaje).toContain("entero positivo");
   });
-});
 
-console.log('Prueba 2: Compra cliente con datos válidos');
-describe("Validar Compra Cliente - Datos Válidos", () => {
-  it("Agregar un registro de compra por un cliente con datos válidos", () => {
-    const compraCliente = {
-      cantidad: 1,
-      precioVenta: 120
-    };
-
+ console.log("Test 2 - Datos válidos:");
+  it("Debe aceptar datos válidos", () => {
+    const compraCliente = { cantidad: 1, precioVenta: 120 };
     const resultado = compracliente(compraCliente);
     expect(resultado.valido).toBe(true);
-    expect(resultado.mensaje).toContain("Compra cliente válida");
+    expect(resultado.mensaje).toContain("válida");
   });
-});
 
-console.log('Prueba 3: Selección de productos con cantidad inválida');
-describe("Validar Compra Cliente - Selección con Cantidad Inválida", () => {
-  it("Validar selección de productos con cantidad inválida", () => {
-    const compraCliente = {
-      cantidad: -1, // Cantidad negativa, inválida
-      precioVenta: 100
-    };
-
+  console.log("Test 3 - Cantidad negativa:");
+  it("Debe rechazar cantidad negativa", () => {
+    const compraCliente = { cantidad: -1, precioVenta: 100 };
     const resultado = compracliente(compraCliente);
     expect(resultado.valido).toBe(false);
-    expect(resultado.mensaje).toContain("Agrega compra cliente con cantidad y precio válidos");
+    expect(resultado.mensaje).toContain("entero positivo");
   });
-});
 
-console.log('Prueba 4: Agregación de cantidad de productos');
-describe("Validar Compra Cliente - Agregación de Cantidad", () => {
-  it("Validar agregación de cantidad de productos", () => {
-    const compraCliente = {
-      cantidad: 5, // Cantidad válida
-      precioVenta: 50
-    };
-
+  console.log("Test 4 - Falta precioVenta:");
+  it("Debe rechazar si falta precioVenta", () => {
+    const compraCliente = { cantidad: 5 };
     const resultado = compracliente(compraCliente);
-    expect(resultado.valido).toBe(true);
-    expect(resultado.mensaje).toContain("Compra cliente válida");
+    
+    expect(resultado.valido).toBe(false);
+    expect(resultado.mensaje).toContain("obligatorios");
+  });
+
+   console.log("Test 5 - Falta cantidad:");
+  it("Debe rechazar si falta cantidad", () => {
+    const compraCliente = { precioVenta: 50 };
+    const resultado = compracliente(compraCliente);
+    expect(resultado.valido).toBe(false);
+    expect(resultado.mensaje).toContain("obligatorios");
+  });
+
+  console.log("Test 6 - PrecioVenta negativo:");
+  it("Debe rechazar precioVenta negativo", () => {
+    const compraCliente = { cantidad: 2, precioVenta: -10 };
+    const resultado = compracliente(compraCliente);
+    expect(resultado.valido).toBe(false);
+    expect(resultado.mensaje).toContain("número positivo");
   });
 });

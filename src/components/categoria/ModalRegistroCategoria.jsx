@@ -10,6 +10,19 @@ const ModalRegistroCategoria = ({
   agregarCategoria,
   errorCarga,
 }) => {
+ const validarLetras = (e) => {
+    const charCode = e.which ? e.which : e.keyCode;
+    if (
+      (charCode < 65 || charCode > 90) &&
+      (charCode < 97 || charCode > 122) &&
+      charCode !== 8 &&
+      charCode !== 46 &&
+      charCode !== 9
+    ) {
+      e.preventDefault();
+    }
+  };
+
   return (
     <Modal show={mostrarModal} onHide={() => setMostrarModal(false)}>
       <Modal.Header
@@ -31,6 +44,7 @@ const ModalRegistroCategoria = ({
               type="text"
               name="NombreCategoria"
               value={nuevaCategoria.NombreCategoria}
+              onKeyDown={validarLetras}
               onChange={manejarCambioInput}
               placeholder="Ingresa el nombre (máx. 20 caracteres)"
               maxLength={20}

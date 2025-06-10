@@ -24,6 +24,21 @@ const ModalEdicionProducto = ({
     }
   };
 
+   // Validation functions remain unchanged
+  const validarLetras = (e) => {
+    const charCode = e.which ? e.which : e.keyCode;
+    if (
+      (charCode < 65 || charCode > 90) &&
+      (charCode < 97 || charCode > 122) &&
+      charCode !== 8 &&
+      charCode !== 46 &&
+      charCode !== 9
+    ) {
+      e.preventDefault();
+    }
+  };
+
+
   return (
     <Modal show={mostrarModalEdicion} onHide={() => setMostrarModalEdicion(false)}>
       <Modal.Header
@@ -45,6 +60,7 @@ const ModalEdicionProducto = ({
               type="text"
               name="nombreProducto"
               value={productoEditado?.nombreProducto || ""}
+              onKeyDown={validarLetras}
               onChange={manejarCambioInputEdicion}
               placeholder="Ingresa el nombre del producto"
               required
@@ -57,6 +73,7 @@ const ModalEdicionProducto = ({
               type="text"
               name="Descripcion"
               value={productoEditado?.Descripcion || ""}
+              onKeyDown={validarLetras}
               onChange={manejarCambioInputEdicion}
               placeholder="Ingresa la descripción"
               required

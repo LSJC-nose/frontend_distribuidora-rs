@@ -12,7 +12,11 @@
     "test:agregarcliente": "nyc jasmine spec/CajaNegra/Validaragregarcliente.spec.js",
     "test:actualizarproducto": "nyc jasmine spec/CajaNegra/ValidaractualizarProducto.spec.js",
     "test:agregarventa": "nyc jasmine spec/CajaNegra/validarAgregarVenta.spec.js",
-    "test:login": "nyc jasmine spec/CajaNegra/validarLogin.spec.js"
+    "test:login": "nyc jasmine spec/CajaNegra/validarLogin.spec.js",
+    "test:compracliente": "nyc jasmine spec/CajaBlanca/ValidarcompraCliente.spec.js",
+    "test:editarventa": "nyc jasmine spec/CajaNegra/editarVenta.spec.js",
+    "test:eliminarproducto": "nyc jasmine spec/CajaNegra/eliminarProducto.spec.js",
+    "test:vercatalogo": "nyc jasmine spec/CajaNegra/verCatalogo.spec.js"
   },
   "dependencies": {
     "bootstrap": "^5.3.6",
@@ -48,20 +52,22 @@
   },
   "nyc": {
     "reporter": [
-      "text"
+      "text",
+      "html"
     ],
     "report-dir": "./coverage",
-    "exclude": [
-      "src/**/*.js"
-    ],
     "include": [
-      "spec/CajaNegra/Validaragregarcliente.spec.js",
-      "spec/CajaNegra/validarProducto.spec.js",
-      "spec/CajaNegra/ValidaractualizarProducto.spec.js",
-      "spec/CajaNegra/validarAgregarVenta.spec.js",
-      "spec/CajaNegra/validarLogin.spec.js"
+      "src/ValidacionesCN/**/*.js"
     ],
-    "all": true,
-    "check-coverage": false
+    "exclude": [
+      "**/*.spec.js",
+      "**/node_modules/**"
+    ],
+    "all": false,
+    "check-coverage": true,
+    "statements": 80,
+    "branches": 80,
+    "functions": 80,
+    "lines": 80
   }
 }

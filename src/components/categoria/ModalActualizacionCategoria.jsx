@@ -9,6 +9,19 @@ const ModalEdicionCategoria = ({
   actualizarCategoria,
   errorCarga,
 }) => {
+const validarLetras = (e) => {
+    const charCode = e.which ? e.which : e.keyCode;
+    if (
+      (charCode < 65 || charCode > 90) &&
+      (charCode < 97 || charCode > 122) &&
+      charCode !== 8 &&
+      charCode !== 46 &&
+      charCode !== 9
+    ) {
+      e.preventDefault();
+    }
+  };
+
   return (
     <Modal show={mostrarModalEdicion} onHide={() => setMostrarModalEdicion(false)}>
       <Modal.Header
@@ -30,6 +43,7 @@ const ModalEdicionCategoria = ({
               type="text"
               name="NombreCategoria"
               value={categoriaEditada?.NombreCategoria || ""}
+              onKeyDown={validarLetras}
               onChange={manejarCambioInputEdicion}
               placeholder="Ingresa el nombre (máx. 20 caracteres)"
               maxLength={20}

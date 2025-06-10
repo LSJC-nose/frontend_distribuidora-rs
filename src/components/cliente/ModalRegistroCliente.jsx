@@ -11,6 +11,32 @@ const ModalRegistroCliente = ({
   errorCarga,
   tipoClientes
 }) => {
+// Validation functions remain unchanged
+  const validarLetras = (e) => {
+    const charCode = e.which ? e.which : e.keyCode;
+    if (
+      (charCode < 65 || charCode > 90) &&
+      (charCode < 97 || charCode > 122) &&
+      charCode !== 8 &&
+      charCode !== 46 &&
+      charCode !== 9
+    ) {
+      e.preventDefault();
+    }
+  };
+
+  const validarNumeros = (e) => {
+    const charCode = e.which ? e.which : e.keyCode;
+    if (
+      (charCode < 48 || charCode > 57) &&
+      charCode !== 8 &&
+      charCode !== 46 &&
+      charCode !== 9
+    ) {
+      e.preventDefault();
+    }
+  };
+
   return (
     <Modal show={mostrarModal} onHide={() => setMostrarModal(false)}>
       <Modal.Header
@@ -32,6 +58,7 @@ const ModalRegistroCliente = ({
               type="text"
               name="Nombre"
               value={nuevoCliente.Nombre}
+              onKeyDown={validarLetras}
               onChange={manejarCambioInput}
               placeholder="Ingresa el nombre (máx. 20 caracteres)"
               maxLength={50}
@@ -46,6 +73,7 @@ const ModalRegistroCliente = ({
               type="text"
               name="Apellido"
               value={nuevoCliente.Apellido}
+              onKeyDown={validarLetras}
               onChange={manejarCambioInput}
               placeholder="Ingresa el apellido (máx. 20 caracteres)"
               maxLength={50}  
