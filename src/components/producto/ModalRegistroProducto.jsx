@@ -60,6 +60,7 @@ const ModalRegistroProducto = ({
               name="nombreProducto"
               value={nuevoProducto.nombreProducto}
               onChange={manejarCambioInput}
+              onKeyDown={validarLetras}
               placeholder="Ingresa el nombre del producto"
               required
             />
@@ -71,6 +72,7 @@ const ModalRegistroProducto = ({
               type="text"
               name="Descripcion"
               value={nuevoProducto.Descripcion}
+               onKeyDown={validarLetras}
               onChange={manejarCambioInput}
               placeholder="Ingresa la descripción"
               required

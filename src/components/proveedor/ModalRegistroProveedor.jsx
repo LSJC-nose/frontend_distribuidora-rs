@@ -9,6 +9,32 @@ const ModalRegistroProveedor = ({
   agregarProveedor,
   errorCarga,
 }) => {
+ // Validation functions remain unchanged
+  const validarLetras = (e) => {
+    const charCode = e.which ? e.which : e.keyCode;
+    if (
+      (charCode < 65 || charCode > 90) &&
+      (charCode < 97 || charCode > 122) &&
+      charCode !== 8 &&
+      charCode !== 46 &&
+      charCode !== 9
+    ) {
+      e.preventDefault();
+    }
+  };
+
+  const validarNumeros = (e) => {
+    const charCode = e.which ? e.which : e.keyCode;
+    if (
+      (charCode < 48 || charCode > 57) &&
+      charCode !== 8 &&
+      charCode !== 46 &&
+      charCode !== 9
+    ) {
+      e.preventDefault();
+    }
+  };
+
   return (
     <Modal show={mostrarModal} onHide={() => setMostrarModal(false)}>
       <Modal.Header style={{ background: "#0d7878",
@@ -28,6 +54,7 @@ const ModalRegistroProveedor = ({
               type="text"
               name="NombreProveedor"
               value={nuevoProveedor.NombreProveedor}
+               onKeyDown={validarLetras}
               onChange={manejarCambioInput}
               placeholder="Ingresa el nombredel proveedor"
               required
