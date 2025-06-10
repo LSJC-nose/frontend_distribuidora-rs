@@ -1,19 +1,37 @@
 function validarProducto(producto) {
   const { nombreProducto, Descripcion, PrecioVenta, PrecioCompra } = producto;
 
-  if (!nombreProducto || !Descripcion || PrecioVenta === '' || PrecioCompra === '') {
+  // Validar campos vacíos
+  if (!nombreProducto || !Descripcion || PrecioVenta === undefined || PrecioCompra === undefined) {
     return { valido: false, mensaje: "Completa todos los campos requeridos." };
   }
 
-  if (isNaN(PrecioVenta) || Number(PrecioVenta) < 0) {
+  // Validar longitud del nombre
+  if (nombreProducto.length < 3 || nombreProducto.length > 50) {
+    return { valido: false, mensaje: "El nombre del producto debe tener entre 3 y 50 caracteres." };
+  }
+
+  // Validar longitud de la descripción
+  if (Descripcion.length < 10 || Descripcion.length > 200) {
+    return { valido: false, mensaje: "La descripción debe tener entre 10 y 200 caracteres." };
+  }
+
+  // Validar precio de venta
+  if (isNaN(PrecioVenta) || Number(PrecioVenta) <= 0) {
     return { valido: false, mensaje: "El precio de venta debe ser un número positivo." };
   }
 
-  if (isNaN(PrecioCompra) || Number(PrecioCompra) < 0) {
+  // Validar precio de compra
+  if (isNaN(PrecioCompra) || Number(PrecioCompra) <= 0) {
     return { valido: false, mensaje: "El precio de compra debe ser un número positivo." };
   }
 
-  return { valido: true };
+  // Validar que el precio de venta sea mayor que el precio de compra
+  if (Number(PrecioVenta) <= Number(PrecioCompra)) {
+    return { valido: false, mensaje: "El precio de venta debe ser mayor que el precio de compra." };
+  }
+
+  return { valido: true, mensaje: "Producto registrado correctamente." };
 }
 
 module.exports = validarProducto;

@@ -1,59 +1,59 @@
-const validarProducto = require('../../src/ValidacionesCN/validarproducto');
+const validarProducto = require('../../src/ValidacionesCN/validarproducto.js');  
 
-console.log('Prueba 1: El producto no se registra con campos vacíos');
 describe("Validación de producto", () => {
+  console.log('Prueba 1: El producto no se registra con campos vacíos');
   it("No permite guardar con campos vacíos", () => {
     const producto = {
       nombreProducto: '',
       Descripcion: '',
-      PrecioVenta: '',
-      PrecioCompra: ''
+      PrecioVenta: undefined,
+      PrecioCompra: undefined
     };
 
     const resultado = validarProducto(producto);
-    expect(resultado.valido).toBeFalse();
+    expect(resultado.valido).toBe(false);
     expect(resultado.mensaje).toContain("campos requeridos");
   }); 
 
-console.log('Prueba 2: El precio venta del producto no puede ser negativo');
+  console.log('Prueba 2: El precio venta del producto no puede ser negativo');
   it("Debe rechazar precio venta negativo", () => {
     const producto = {
       nombreProducto: 'Manzana',
-      Descripcion: 'Manzana roja',
+      Descripcion: 'Manzana roja deliciosa y jugosa',
       PrecioVenta: -10,
-      PrecioCompra: 10
+      PrecioCompra: 5
     };
 
     const resultado = validarProducto(producto);
-    expect(resultado.valido).toBeFalse();
-    expect(resultado.mensaje).toContain("precio venta");
+    expect(resultado.valido).toBe(false);
+    expect(resultado.mensaje).toContain("precio de venta");
   });
 
-console.log('Prueba 3: El Precio Compra del producto no puede ser negativo');
+  console.log('Prueba 3: El Precio Compra del producto no puede ser negativo');
   it("Debe rechazar precio compra negativo", () => {
     const producto = {
-       nombreProducto: 'Manzana',
-      Descripcion: 'Manzana roja',
+      nombreProducto: 'Manzana',
+      Descripcion: 'Manzana roja deliciosa y jugosa',
       PrecioVenta: 10,
-      PrecioCompra: 10
+      PrecioCompra: -5
     };
 
     const resultado = validarProducto(producto);
-    expect(resultado.valido).toBeFalse();
-    expect(resultado.mensaje).toContain("precio compra");
-    /*expect(resultado.mensaje).toBe("El stock debe ser número positivo");*/
+    expect(resultado.valido).toBe(false);
+    expect(resultado.mensaje).toContain("precio de compra");
   });
 
-console.log('Prueba 4: Producto registrado correctamente');
+  console.log('Prueba 4: Producto registrado correctamente');
   it("Agregar producto correctamente", () => {
     const producto = {
       nombreProducto: 'Manzana',
-      Descripcion: 'Manzana roja',
+      Descripcion: 'Manzana roja deliciosa y jugosa',
       PrecioVenta: 10,
-      PrecioCompra: 10
+      PrecioCompra: 5
     };
 
     const resultado = validarProducto(producto);
-    expect(resultado.valido).toBeTrue();
+    expect(resultado.valido).toBe(true);
+    expect(resultado.mensaje).toContain("correctamente");
   });
 });
