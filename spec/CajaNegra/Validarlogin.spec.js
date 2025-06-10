@@ -1,57 +1,78 @@
-const validarLogin = require('../../src/ValidacionesCN/validarlogin.js');
+const validarLogin = require('../../src/ValidacionesCN/validarLogin');
 
-console.log('Prueba 1: El usuario inicia sesion');
-describe("Validación Login", () => {
-  it("Permitir iniciar sesion ", () => {
-    const login = {
+describe("Validación de login", () => {
+  console.log('Prueba 1: validación de campos vacíos');
+  it("No debe permitir login con campos vacíos", () => {
+    const credenciales = {
       usuario: '',
-      contraseña: ''
+      password: ''
     };
 
-    const resultado = validarLogin(login);
-    expect(resultado.valido).toBeFalse();
-    expect(resultado.mensaje).toContain("campos requeridos");
+    const resultado = validarLogin(credenciales);
+    expect(resultado.valido).toBe(false);
+    expect(resultado.mensaje).toContain("obligatorios");
   });
-});
 
-console.log('Prueba 2: El usuario intenta con contraseña incorrecta');
-describe("Validación Login - Contraseña Incorrecta", () => {
-  it("Rechazar login con contraseña incorrecta", () => {
-    const login = {
-      usuario: 'usuario1',
-      contraseña: '1234' // Suponiendo que la contraseña correcta debería ser diferente
+  console.log('Prueba 2: validación de longitud del usuario');
+  it("No debe permitir usuarios muy cortos o muy largos", () => {
+    const credencialesCorto = {
+      usuario: 'abc',
+      password: 'password123'
+    };
+    const credencialesLargo = {
+      usuario: 'usuario'.repeat(10),
+      password: 'password123'
     };
 
-    const resultado = validarLogin(login);
-    expect(resultado.valido).toBeFalse();
-    expect(resultado.mensaje).toContain("contraseña incorrecta");
+    expect(validarLogin(credencialesCorto).valido).toBe(false);
+    expect(validarLogin(credencialesLargo).valido).toBe(false);
   });
-});
 
-console.log('Prueba 3: El usuario intenta con datos nulos');
-describe("Validación Login - Datos Nulos", () => {
-  it("Rechazar login con datos nulos", () => {
-    const login = {
-      usuario: null,
-      contraseña: null
+  console.log('Prueba 3: validación de formato del usuario');
+  it("No debe permitir usuarios con caracteres especiales", () => {
+    const credenciales = {
+      usuario: 'usuario@123',
+      password: 'password123'
     };
 
-    const resultado = validarLogin(login);
-    expect(resultado.valido).toBeFalse();
-    expect(resultado.mensaje).toContain("campos requeridos");
+    const resultado = validarLogin(credenciales);
+    expect(resultado.valido).toBe(false);
+    expect(resultado.mensaje).toContain("solo puede contener letras");
   });
-});
 
-console.log('Prueba 4: El usuario inicia sesion con datos válidos');
-describe("Validación Login - Datos Válidos", () => {
-  it("Permitir login con datos válidos", () => {
-    const login = {
-      usuario: 'usuario1',
-      contraseña: 'contraseña123' // Suponiendo que esta es una contraseña válida
+  console.log('Prueba 4: validación de longitud de la contraseña');
+  it("No debe permitir contraseñas muy cortas o muy largas", () => {
+    const credenciales = {
+      usuario: 'usuario123',
+      password: '12345'
     };
 
-    const resultado = validarLogin(login);
-    expect(resultado.valido).toBeTrue();
-    expect(resultado.mensaje).toContain("inicio de sesión exitoso");
+    const resultado = validarLogin(credenciales);
+    expect(resultado.valido).toBe(false);
+    expect(resultado.mensaje).toContain("contraseña debe tener");
+  });
+
+  console.log('Prueba 5: validación de formato de la contraseña');
+  it("No debe permitir contraseñas sin letras o números", () => {
+    const credenciales = {
+      usuario: 'usuario123',
+      password: 'abcdef'
+    };
+
+    const resultado = validarLogin(credenciales);
+    expect(resultado.valido).toBe(false);
+    expect(resultado.mensaje).toContain("debe contener al menos una letra y un número");
+  });
+
+  console.log('Prueba 6: credenciales válidas');
+  it("Debe permitir login con credenciales válidas", () => {
+    const credenciales = {
+      usuario: 'usuario123',
+      password: 'password123'
+    };
+
+    const resultado = validarLogin(credenciales);
+    expect(resultado.valido).toBe(true);
+    expect(resultado.mensaje).toContain("válidas");
   });
 });

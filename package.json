@@ -7,10 +7,12 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test:producto": "nyc jasmine **/CajaNegra/validarProducto.spec.js",
-    "test:agregarcliente": "nyc jasmine **/CajaNegra/Validaragregarcliente.spec.js",
-    "test:actualizarproducto": "nyc jasmine **/CajaNegra/ValidaractualizarProducto.spec.js",
-    "test:agregarventa": "nyc jasmine **/CajaNegra/validarAgregarVenta.spec.js"
+    "test": "jasmine",
+    "test:producto": "nyc jasmine spec/CajaNegra/validarProducto.spec.js",
+    "test:agregarcliente": "nyc jasmine spec/CajaNegra/Validaragregarcliente.spec.js",
+    "test:actualizarproducto": "nyc jasmine spec/CajaNegra/ValidaractualizarProducto.spec.js",
+    "test:agregarventa": "nyc jasmine spec/CajaNegra/validarAgregarVenta.spec.js",
+    "test:login": "nyc jasmine spec/CajaNegra/validarLogin.spec.js"
   },
   "dependencies": {
     "bootstrap": "^5.3.6",
@@ -53,12 +55,13 @@
       "src/**/*.js"
     ],
     "include": [
-      "**/CajaNegra/Validaragregarcliente.spec.js",
-      "**/CajaNegra/validarProducto.spec.js",
-      "**/CajaNegra/ValidaractualizarProducto.spec.js",
-      "**/CajaNegra/validarAgregarVenta.spec.js"
+      "spec/CajaNegra/Validaragregarcliente.spec.js",
+      "spec/CajaNegra/validarProducto.spec.js",
+      "spec/CajaNegra/ValidaractualizarProducto.spec.js",
+      "spec/CajaNegra/validarAgregarVenta.spec.js",
+      "spec/CajaNegra/validarLogin.spec.js"
     ],
-    "all": false,
+    "all": true,
     "check-coverage": false
   }
 }
