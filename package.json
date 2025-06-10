@@ -8,7 +8,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test:producto": "nyc jasmine **/CajaNegra/validarProducto.spec.js",
-    "test:agregarcliente": "nyc jasmine **/CajaNegra/Validaragregarcliente.spec.js"
+    "test:agregarcliente": "nyc jasmine **/CajaNegra/Validaragregarcliente.spec.js",
+    "test:actualizarproducto": "nyc jasmine **/CajaNegra/ValidaractualizarProducto.spec.js"
   },
   "dependencies": {
     "bootstrap": "^5.3.6",
@@ -52,10 +53,10 @@
     ],
     "include": [
       "**/CajaNegra/Validaragregarcliente.spec.js",
-       "**/CajaNegra/Validaragregarcliente.spec.js"
+      "**/CajaNegra/validarProducto.spec.js",
+      "**/CajaNegra/ValidaractualizarProducto.spec.js"
     ],
-   
-    "all": true,
+    "all": false,
     "check-coverage": false
   }
 }
